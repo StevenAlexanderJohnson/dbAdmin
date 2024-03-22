@@ -3,4 +3,4 @@ dist/
 .vscode/
 .DS_Store
 .idea
-
+build/
