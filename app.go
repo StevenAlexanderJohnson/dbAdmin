@@ -9,7 +9,7 @@ import (
 // App struct
 type App struct {
 	ctx          context.Context
-	databaseHash map[string]DbConnection
+	databaseHash map[string]DbConnection[UserPermissionResult]
 }
 
 // NewApp creates a new App application struct
@@ -21,7 +21,7 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
-	a.databaseHash = make(map[string]DbConnection)
+	a.databaseHash = make(map[string]DbConnection[UserPermissionResult])
 }
 
 // domReady is called after front-end resources have been loaded
@@ -62,7 +62,7 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 		if _, ok := a.databaseHash[databaseKey]; ok {
 			return fmt.Sprintf("%s has already been registered.\n", databaseKey)
 		}
-		var connection = MsSqlConnection{
+		var connection = MsSqlConnection[UserPermissionResult]{
 			server:   server,
 			database: database,
 			username: username,
