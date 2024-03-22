@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"net/url"
 
@@ -10,6 +11,7 @@ import (
 type DbConnection interface {
 	connect() error
 	disconnect() error
+	nonQuery(ctx context.Context, query string, parameters *map[string]interface{}) error
 }
 
 type MsSqlConnection struct {
@@ -41,4 +43,18 @@ func (m *MsSqlConnection) connect() error {
 
 func (m *MsSqlConnection) disconnect() error {
 	return m.connection.Close()
+}
+
+func (m *MsSqlConnection) nonQuery(ctx context.Context, query string, parameters *map[string]interface{}) error {
+	queryParams := make([]sql.NamedArg, len(*parameters))
+	index := 0
+	for key, value := range *parameters {
+		queryParams[index] = sql.Named(key, value)
+		index++
+	}
+	_, err := m.connection.ExecContext(ctx, query, sql.Named, queryParams)
+	if err != nil {
+		return err
+	}
+	return nil
 }
