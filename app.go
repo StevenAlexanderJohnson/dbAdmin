@@ -79,3 +79,20 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 	}
 	return "Successfully connected to the database."
 }
+
+func (a *App) GrantPermission(databaseKey string, user string, target string, permission string) string {
+	connection, ok := a.databaseHash[databaseKey]
+	if !ok {
+		return fmt.Sprintf("%s has not been registered yet.\n", databaseKey)
+	}
+
+	if err := connection.nonQuery(a.ctx, "GRANT @permission on @target TO @user;", &map[string]interface{}{
+		"@permission": permission,
+		"@target":     target,
+		"@user":       user,
+	}); err != nil {
+		return fmt.Sprintf("Unable to update user's permissions.\n%e\n", err)
+	}
+
+	return fmt.Sprintf("%s has been granted the %s permission\n", user, permission)
+}
