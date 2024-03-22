@@ -60,7 +60,7 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 	case "mssql":
 		databaseKey := fmt.Sprintf("%s:%s", server, database)
 		if _, ok := a.databaseHash[databaseKey]; ok {
-			return fmt.Sprintf("%s has already been registered.\n")
+			return fmt.Sprintf("%s has already been registered.\n", databaseKey)
 		}
 		var connection = MsSqlConnection{
 			server:   server,
@@ -79,5 +79,3 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 	}
 	return "Successfully connected to the database."
 }
-
-func (a *App) 
