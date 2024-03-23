@@ -2,14 +2,20 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // App struct
 type App struct {
 	ctx          context.Context
 	databaseHash map[string]Database
+	localDb      *sql.DB
 }
 
 // NewApp creates a new App application struct
@@ -22,6 +28,26 @@ func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
 	a.databaseHash = make(map[string]Database)
+	appDataDir := filepath.Join(os.Getenv("APPDATA"), "dbAdmin")
+	_, err := os.Stat(appDataDir)
+	if os.IsNotExist(err) {
+		err := os.MkdirAll(appDataDir, 0755)
+		if err != nil {
+			log.Fatalf("Unable to create app data directory.\n%e\n", err)
+		}
+	}
+	databasePath := filepath.Join(appDataDir, "data.db")
+	_, err = os.Stat(databasePath)
+	if os.IsNotExist(err) {
+		_, err = os.Create(databasePath)
+		if err != nil {
+			log.Fatalf("Unable to find or create app data db.\n%e\n", err)
+		}
+	}
+	a.localDb, err = sql.Open("sqlite3", databasePath)
+	if err != nil {
+		log.Fatalf("Unable to connect to app data db.\n%e\n", err)
+	}
 }
 
 // domReady is called after front-end resources have been loaded
