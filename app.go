@@ -9,7 +9,7 @@ import (
 // App struct
 type App struct {
 	ctx          context.Context
-	databaseHash map[string]DbConnection[UserPermissionResult]
+	databaseHash map[string]Database
 }
 
 // NewApp creates a new App application struct
@@ -21,7 +21,7 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
-	a.databaseHash = make(map[string]DbConnection[UserPermissionResult])
+	a.databaseHash = make(map[string]Database)
 }
 
 // domReady is called after front-end resources have been loaded
@@ -34,7 +34,7 @@ func (a App) domReady(ctx context.Context) {
 // Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	for _, connection := range a.databaseHash {
-		err := connection.disconnect()
+		err := connection.Disconnect()
 		if err != nil {
 			log.Println(err)
 		}
@@ -62,14 +62,13 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 		if _, ok := a.databaseHash[databaseKey]; ok {
 			return fmt.Sprintf("%s has already been registered.\n", databaseKey)
 		}
-		var connection = MsSqlConnection[UserPermissionResult]{
+		connection := MsSqlConnection2{
 			server:   server,
 			database: database,
 			username: username,
 			password: password,
 		}
-		err := connection.connect()
-		if err != nil {
+		if err := connection.Initialize(); err != nil {
 			return fmt.Sprintf("There was an error connecting to the database.\n%e\n", err)
 		}
 		a.databaseHash[databaseKey] = &connection
@@ -80,19 +79,16 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 	return "Successfully connected to the database."
 }
 
-func (a *App) GrantPermission(databaseKey string, user string, target string, permission string) string {
-	connection, ok := a.databaseHash[databaseKey]
+func (a *App) GetUserPermissions(databaseKey string, user string, target string) string {
+	db, ok := a.databaseHash[databaseKey]
 	if !ok {
 		return fmt.Sprintf("%s has not been registered yet.\n", databaseKey)
 	}
 
-	if err := connection.nonQuery(a.ctx, "GRANT @permission on @target TO @user;", &map[string]interface{}{
-		"@permission": permission,
-		"@target":     target,
-		"@user":       user,
-	}); err != nil {
-		return fmt.Sprintf("Unable to update user's permissions.\n%e\n", err)
+	_, err := Query[UserPermissionResult2](db, a.ctx, "SELECT * FROM Permissions", nil)
+	if err != nil {
+		return fmt.Sprintf("An error occurred while collecting user permissions.\n%s\n", err)
 	}
 
-	return fmt.Sprintf("%s has been granted the %s permission\n", user, permission)
+	return "Success"
 }
