@@ -88,7 +88,7 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 		if _, ok := a.databaseHash[databaseKey]; ok {
 			return fmt.Sprintf("%s has already been registered.\n", databaseKey)
 		}
-		connection := MsSqlConnection2{
+		connection := MsSqlConnection{
 			server:   server,
 			database: database,
 			username: username,
@@ -111,7 +111,7 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 		return fmt.Sprintf("%s has not been registered yet.\n", databaseKey)
 	}
 
-	_, err := Query[UserPermissionResult2](db, a.ctx, "SELECT * FROM Permissions", nil)
+	_, err := Query[UserPermissionResult](db, a.ctx, "SELECT * FROM Permissions", nil)
 	if err != nil {
 		return fmt.Sprintf("An error occurred while collecting user permissions.\n%s\n", err)
 	}
