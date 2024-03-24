@@ -6,18 +6,18 @@
 
     let usingConnectionString = false;
 
-    document.addEventListener('submit', (e) => {
+    document.addEventListener("submit", (e) => {
         e.preventDefault();
-        console.log(serverInput)
-        console.log(databaseInput)
-        console.log(connectionStringInput)
-        console.log(usingConnectionString)
-    })
+        console.log(serverInput);
+        console.log(databaseInput);
+        console.log(connectionStringInput);
+        console.log(usingConnectionString);
+    });
 </script>
 
-<form class="grid grid-rows-3 justify-center h-full">
-    <div class="flex flex-col justify-center items-center self-end gap-4 ">
-        <h1 class="text-6xl font-bold text-text">Register Database</h1>
+<form class="grid grid-rows-3 gap-8 justify-center h-full">
+    <div class="flex flex-col justify-center items-center self-end gap-4 px-4">
+        <h1 class="text-6xl font-bold text-text text-center">Register Database</h1>
         <label class="cursor-pointer select-none">
             <input
                 type="checkbox"
@@ -31,12 +31,29 @@
                     peer-checked:after:translate-x-full
                     "
             >
-                <span class="z-10 p-2">Credential Form</span>
-                <span class="z-10 p-2">Connection String</span>
+                <span class="z-10 p-2 font-bold text-black text-center">Credential Form</span>
+                <span class="z-10 p-2 font-bold text-black text-center">Connection String</span>
             </div>
         </label>
     </div>
     <div class="flex flex-col justify-center items-center gap-4">
+        <label
+            for="server-select"
+            class="text-2xl font-bold text-text"
+        >
+            Driver
+        </label>
+        <select
+            title="server-select"
+            class="w-80 h-16 text-center text-2xl outline-none bg-transparent z-10 border-b-2 border-primary text-text invalid:border-red-600 peer"
+            value="mssql"
+            disabled
+            required
+        >
+            <option value="mssql" class="bg-background outline-none border-none">
+                MS SQL
+            </option>
+        </select>
         {#if usingConnectionString}
             <input
                 title="connection-string-input"

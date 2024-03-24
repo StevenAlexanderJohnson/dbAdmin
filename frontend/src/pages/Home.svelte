@@ -16,7 +16,7 @@
 <div class="flex flex-col justify-center items-center h-full">
     {#if searching}
         <span class="
-            h-16 w-96 text-text text-2xl bg-background rounded-full flex items-center justify-center p-1 relative
+            w-1/2 text-center text-text text-2xl bg-background rounded-full flex items-center justify-center p-1 relative
             before:absolute before:top-0 before:left-0 before:content-[''] before:w-full before:h-full before:bg-gradient-to-r before:from-primary before:to-accent before:blur-xl before:animate-ping
             "
         >
