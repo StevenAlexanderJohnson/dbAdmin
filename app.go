@@ -128,7 +128,7 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	case *MongoConnection:
 		err = v.GetUserPermissions()
 	case *MsSqlConnection:
-		err = v.Query()
+		err = v.QueryUserPermissions()
 	default:
 		return "An error occurred while collecting user permissions."
 	}

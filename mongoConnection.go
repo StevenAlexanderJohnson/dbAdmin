@@ -10,7 +10,7 @@ import (
 
 type MongoInterface interface {
 	Database
-	GetUserPermissions() error
+	FindUserPermissions() error
 }
 
 type MongoConnection struct {

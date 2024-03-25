@@ -7,7 +7,7 @@ import (
 
 type MsSqlDatabase interface {
 	Database
-	Query() error
+	QueryUserPermissions() error
 }
 
 type MsSqlConnection struct {
@@ -48,6 +48,6 @@ func (m *MsSqlConnection) Connection() *sql.DB {
 	return m.connection
 }
 
-func (m *MsSqlConnection) Query() error {
+func (m *MsSqlConnection) QueryUserPermissions() error {
 	return nil
 }
