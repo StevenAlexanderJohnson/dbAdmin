@@ -5,6 +5,11 @@ import (
 	"net/url"
 )
 
+type MsSqlDatabase interface {
+	Database
+	Query() error
+}
+
 type MsSqlConnection struct {
 	server   string
 	database string
@@ -41,4 +46,8 @@ func (m *MsSqlConnection) Disconnect() error {
 
 func (m *MsSqlConnection) Connection() *sql.DB {
 	return m.connection
+}
+
+func (m *MsSqlConnection) Query() error {
+	return nil
 }

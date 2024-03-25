@@ -88,16 +88,28 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 		if _, ok := a.databaseHash[databaseKey]; ok {
 			return fmt.Sprintf("%s has already been registered.\n", databaseKey)
 		}
-		connection := MsSqlConnection{
-			server:   server,
-			database: database,
-			username: username,
-			password: password,
+		var connection Database
+		switch driver {
+		case "mssql":
+			s := MsSqlConnection{
+				server:   server,
+				database: database,
+				username: username,
+				password: password,
+			}
+			connection = &s
+		case "mongo":
+			m := MongoConnection{
+				server:   server,
+				username: username,
+				password: password,
+			}
+			connection = &m
 		}
 		if err := connection.Initialize(); err != nil {
 			return fmt.Sprintf("There was an error connecting to the database.\n%e\n", err)
 		}
-		a.databaseHash[databaseKey] = &connection
+		a.databaseHash[databaseKey] = connection
 
 	default:
 		return fmt.Sprintf("%s is not a valid driver.\n", driver)
@@ -111,7 +123,16 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 		return fmt.Sprintf("%s has not been registered yet.\n", databaseKey)
 	}
 
-	_, err := Query[UserPermissionResult](db, a.ctx, "SELECT * FROM Permissions", nil)
+	var err error
+	switch v := db.(type) {
+	case *MongoConnection:
+		err = v.GetUserPermissions()
+	case *MsSqlConnection:
+		err = v.Query()
+	default:
+		return "An error occurred while collecting user permissions."
+	}
+
 	if err != nil {
 		return fmt.Sprintf("An error occurred while collecting user permissions.\n%s\n", err)
 	}

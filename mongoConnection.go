@@ -8,6 +8,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type MongoInterface interface {
+	Database
+	GetUserPermissions() error
+}
+
 type MongoConnection struct {
 	server   string
 	username string
@@ -39,6 +44,6 @@ func (m *MongoConnection) Disconnect() error {
 	return nil
 }
 
-func (m *MongoConnection) Connection() *mongo.Client {
-	return m.connection
+func (m *MongoConnection) GetUserPermissions() error {
+	return nil
 }

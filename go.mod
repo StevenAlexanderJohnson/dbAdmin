@@ -8,6 +8,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/microsoft/go-mssqldb v1.7.0
 	github.com/wailsapp/wails/v2 v2.8.0
+	go.mongodb.org/mongo-driver v1.14.0
 )
 
 require (
@@ -42,7 +43,6 @@ require (
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
-	go.mongodb.org/mongo-driver v1.14.0 // indirect
 	golang.org/x/crypto v0.18.0 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/net v0.20.0 // indirect
