@@ -57,13 +57,13 @@ func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryR
 	WHERE p.name = @user and (@target = '' or o.name = @target)
 	`
 	output := QueryResult[UserPermissionResult]{
-		duration: time.Since(time.Now()),
-		data:     nil,
+		Duration: time.Since(time.Now()),
+		Data:     nil,
 	}
 	outputData := make([]UserPermissionResult, 0)
 	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("@user", user), sql.Named("@target", target))
 	if err != nil {
-		output.data = nil
+		output.Data = nil
 		return output, err
 	}
 	for rows.Next() {
@@ -74,6 +74,6 @@ func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryR
 		}
 		outputData = append(outputData, temp)
 	}
-	output.data = outputData
+	output.Data = outputData
 	return output, nil
 }

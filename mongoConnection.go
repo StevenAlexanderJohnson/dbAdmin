@@ -43,7 +43,7 @@ func (m *MongoDatabase) Disconnect() error {
 
 func (m *MongoDatabase) FindUserPermissions() (QueryResult[UserPermissionResult], error) {
 	return QueryResult[UserPermissionResult]{
-		duration: time.Since(time.Now()),
-		data:     nil,
+		Duration: time.Since(time.Now()),
+		Data:     nil,
 	}, nil
 }

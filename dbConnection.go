@@ -22,6 +22,6 @@ type UserPermissionResult struct {
 }
 
 type QueryResult[T DataResult] struct {
-	duration time.Duration
-	data     []T
+	Duration time.Duration
+	Data     []T
 }
