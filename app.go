@@ -96,6 +96,7 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 				database: database,
 				username: username,
 				password: password,
+				ctx:      a.ctx,
 			}
 		case "mongo":
 			connection = &MongoDatabase{
@@ -127,7 +128,7 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	case *MongoDatabase:
 		result, err = v.FindUserPermissions()
 	case *MsSqlDatabase:
-		result, err = v.QueryUserPermissions()
+		result, err = v.QueryUserPermissions(user)
 	default:
 		return "An error occurred while collecting user permissions."
 	}

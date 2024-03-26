@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"database/sql"
+	"log"
 	"net/url"
 	"time"
 )
@@ -13,6 +15,7 @@ type MsSqlDatabase struct {
 	username string
 	password string
 
+	ctx        context.Context
 	connection *sql.DB
 }
 
@@ -45,9 +48,32 @@ func (m *MsSqlDatabase) Connection() *sql.DB {
 	return m.connection
 }
 
-func (m *MsSqlDatabase) QueryUserPermissions() (QueryResult[UserPermissionResult], error) {
-	return QueryResult[UserPermissionResult]{
+func (m *MsSqlDatabase) QueryUserPermissions(user string) (QueryResult[UserPermissionResult], error) {
+	tsql := `
+	SELECT p.name, dp.permission_name, o.name
+	FROM sys.database_principles p
+	JOIN sys.database_permissions dp on dp.grantee_principal_id = p.principal_id
+	LEFT JOIN sys.objects o on o.object_id = dp.major_id
+	WHERE p.name = @user
+	`
+	output := QueryResult[UserPermissionResult]{
 		duration: time.Since(time.Now()),
 		data:     nil,
-	}, nil
+	}
+	outputData := make([]UserPermissionResult, 0)
+	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("@user", user))
+	if err != nil {
+		output.data = nil
+		return output, err
+	}
+	for rows.Next() {
+		temp := UserPermissionResult{}
+		err = rows.Scan(&temp)
+		if err != nil {
+			log.Println("Error reading row from User Permissions result.")
+		}
+		outputData = append(outputData, temp)
+	}
+	output.data = outputData
+	return output, nil
 }
