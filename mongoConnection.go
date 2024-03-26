@@ -9,12 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type MongoDatabase interface {
+type MongoDatabase struct {
 	Database
-	FindUserPermissions() (QueryResult[UserPermissionResult], error)
-}
-
-type MongoConnection struct {
 	server   string
 	username string
 	password string
@@ -22,7 +18,7 @@ type MongoConnection struct {
 	connection *mongo.Client
 }
 
-func (m *MongoConnection) Initialize() error {
+func (m *MongoDatabase) Initialize() error {
 	client, err := mongo.Connect(
 		context.TODO(),
 		options.Client().ApplyURI(
@@ -41,11 +37,11 @@ func (m *MongoConnection) Initialize() error {
 	return nil
 }
 
-func (m *MongoConnection) Disconnect() error {
-	return nil
+func (m *MongoDatabase) Disconnect() error {
+	return m.connection.Disconnect(context.TODO())
 }
 
-func (m *MongoConnection) GetUserPermissions() (QueryResult[UserPermissionResult], error) {
+func FindUserPermissions(database *MongoDatabase) (QueryResult[UserPermissionResult], error) {
 	return QueryResult[UserPermissionResult]{
 		duration: time.Since(time.Now()),
 		data:     nil,

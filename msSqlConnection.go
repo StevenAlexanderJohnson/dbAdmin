@@ -6,12 +6,8 @@ import (
 	"time"
 )
 
-type MsSqlDatabase interface {
+type MsSqlDatabase struct {
 	Database
-	QueryUserPermissions() (QueryResult[UserPermissionResult], error)
-}
-
-type MsSqlConnection struct {
 	server   string
 	database string
 	username string
@@ -20,7 +16,7 @@ type MsSqlConnection struct {
 	connection *sql.DB
 }
 
-func (m *MsSqlConnection) Initialize() error {
+func (m *MsSqlDatabase) Initialize() error {
 	query := url.Values{}
 	query.Add("database", m.database)
 	url := &url.URL{
@@ -38,18 +34,18 @@ func (m *MsSqlConnection) Initialize() error {
 	return nil
 }
 
-func (m *MsSqlConnection) Disconnect() error {
+func (m *MsSqlDatabase) Disconnect() error {
 	if err := m.connection.Close(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *MsSqlConnection) Connection() *sql.DB {
+func (m *MsSqlDatabase) Connection() *sql.DB {
 	return m.connection
 }
 
-func (m *MsSqlConnection) QueryUserPermissions() (QueryResult[UserPermissionResult], error) {
+func QueryUserPermissions(database *MsSqlDatabase) (QueryResult[UserPermissionResult], error) {
 	return QueryResult[UserPermissionResult]{
 		duration: time.Since(time.Now()),
 		data:     nil,

@@ -91,7 +91,7 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 		var connection Database
 		switch driver {
 		case "mssql":
-			s := MsSqlConnection{
+			s := MsSqlDatabase{
 				server:   server,
 				database: database,
 				username: username,
@@ -99,7 +99,7 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 			}
 			connection = &s
 		case "mongo":
-			m := MongoConnection{
+			m := MongoDatabase{
 				server:   server,
 				username: username,
 				password: password,
@@ -126,10 +126,10 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	var err error
 	var result QueryResult[UserPermissionResult]
 	switch v := db.(type) {
-	case MongoDatabase:
-		result, err = v.FindUserPermissions()
-	case MsSqlDatabase:
-		result, err = v.QueryUserPermissions()
+	case *MongoDatabase:
+		result, err = FindUserPermissions(v)
+	case *MsSqlDatabase:
+		result, err = QueryUserPermissions(v)
 	default:
 		return "An error occurred while collecting user permissions."
 	}
