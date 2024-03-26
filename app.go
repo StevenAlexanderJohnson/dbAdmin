@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -117,10 +116,10 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 	return "Successfully connected to the database."
 }
 
-func (a *App) GetUserPermissions(databaseKey string, user string, target string) string {
+func (a *App) GetUserPermissions(databaseKey string, user string, target string) (QueryResult[UserPermissionResult], error) {
 	db, ok := a.databaseHash[databaseKey]
 	if !ok {
-		return fmt.Sprintf("%s has not been registered yet.\n", databaseKey)
+		return QueryResult[UserPermissionResult]{}, fmt.Errorf("%s has not been registered yet", databaseKey)
 	}
 
 	var err error
@@ -132,15 +131,11 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	case *MsSqlDatabase:
 		queryResult, err = v.QueryUserPermissions(user, target)
 	default:
-		return "An error occurred while collecting user permissions."
+		return QueryResult[UserPermissionResult]{}, fmt.Errorf("an error occurred while collecting user permissions")
 	}
 
 	if err != nil {
-		return fmt.Sprintf("An error occurred while collecting user permissions.\n%s\n", err)
+		return QueryResult[UserPermissionResult]{}, fmt.Errorf("an error occurred while collecting user permissions\n%s", err)
 	}
-	result, err := json.Marshal(queryResult)
-	if err != nil {
-		return fmt.Sprintf("An error occurred while marshaling user permissions.\n%s\n", err)
-	}
-	return string(result)
+	return queryResult, nil
 }

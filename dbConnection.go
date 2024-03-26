@@ -16,12 +16,12 @@ type DataResult interface {
 }
 
 type UserPermissionResult struct {
-	Name           string
-	PermissionName string
-	ObjectName     *string
+	Name           string  `json:"Name"`
+	PermissionName string  `json:"PermissionName"`
+	ObjectName     *string `json:"ObjectName"`
 }
 
 type QueryResult[T DataResult] struct {
-	Duration time.Duration
-	Data     []T
+	Duration time.Duration `json:"Duration"`
+	Data     []T           `json:"Data"`
 }
