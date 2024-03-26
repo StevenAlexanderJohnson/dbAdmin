@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -123,12 +124,13 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	}
 
 	var err error
-	var result QueryResult[UserPermissionResult]
+	var queryResult QueryResult[UserPermissionResult]
+
 	switch v := db.(type) {
 	case *MongoDatabase:
-		result, err = v.FindUserPermissions()
+		queryResult, err = v.FindUserPermissions()
 	case *MsSqlDatabase:
-		result, err = v.QueryUserPermissions(user)
+		queryResult, err = v.QueryUserPermissions(user, target)
 	default:
 		return "An error occurred while collecting user permissions."
 	}
@@ -136,6 +138,9 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	if err != nil {
 		return fmt.Sprintf("An error occurred while collecting user permissions.\n%s\n", err)
 	}
-	fmt.Println(result)
-	return "Success"
+	result, err := json.Marshal(queryResult)
+	if err != nil {
+		return fmt.Sprintf("An error occurred while marshaling user permissions.\n%s\n", err)
+	}
+	return string(result)
 }

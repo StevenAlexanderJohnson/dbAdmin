@@ -16,9 +16,9 @@ type DataResult interface {
 }
 
 type UserPermissionResult struct {
-	name           string
-	permissionName string
-	objectName     *string
+	Name           string
+	PermissionName string
+	ObjectName     *string
 }
 
 type QueryResult[T DataResult] struct {
