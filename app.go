@@ -124,11 +124,12 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	}
 
 	var err error
+	var result QueryResult[UserPermissionResult]
 	switch v := db.(type) {
-	case *MongoConnection:
-		err = v.GetUserPermissions()
-	case *MsSqlConnection:
-		err = v.QueryUserPermissions()
+	case MongoDatabase:
+		result, err = v.FindUserPermissions()
+	case MsSqlDatabase:
+		result, err = v.QueryUserPermissions()
 	default:
 		return "An error occurred while collecting user permissions."
 	}
@@ -136,6 +137,6 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	if err != nil {
 		return fmt.Sprintf("An error occurred while collecting user permissions.\n%s\n", err)
 	}
-
+	fmt.Println(result)
 	return "Success"
 }

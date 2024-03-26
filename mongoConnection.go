@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -10,7 +11,7 @@ import (
 
 type MongoDatabase interface {
 	Database
-	FindUserPermissions() error
+	FindUserPermissions() (QueryResult[UserPermissionResult], error)
 }
 
 type MongoConnection struct {
@@ -44,6 +45,9 @@ func (m *MongoConnection) Disconnect() error {
 	return nil
 }
 
-func (m *MongoConnection) GetUserPermissions() error {
-	return nil
+func (m *MongoConnection) GetUserPermissions() (QueryResult[UserPermissionResult], error) {
+	return QueryResult[UserPermissionResult]{
+		duration: time.Since(time.Now()),
+		data:     nil,
+	}, nil
 }

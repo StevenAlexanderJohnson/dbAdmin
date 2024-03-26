@@ -3,11 +3,12 @@ package main
 import (
 	"database/sql"
 	"net/url"
+	"time"
 )
 
 type MsSqlDatabase interface {
 	Database
-	QueryUserPermissions() error
+	QueryUserPermissions() (QueryResult[UserPermissionResult], error)
 }
 
 type MsSqlConnection struct {
@@ -48,6 +49,9 @@ func (m *MsSqlConnection) Connection() *sql.DB {
 	return m.connection
 }
 
-func (m *MsSqlConnection) QueryUserPermissions() error {
-	return nil
+func (m *MsSqlConnection) QueryUserPermissions() (QueryResult[UserPermissionResult], error) {
+	return QueryResult[UserPermissionResult]{
+		duration: time.Since(time.Now()),
+		data:     nil,
+	}, nil
 }
