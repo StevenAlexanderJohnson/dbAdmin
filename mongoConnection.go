@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type MongoInterface interface {
+type MongoDatabase interface {
 	Database
 	FindUserPermissions() error
 }
