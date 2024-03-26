@@ -125,9 +125,9 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	var result QueryResult[UserPermissionResult]
 	switch v := db.(type) {
 	case *MongoDatabase:
-		result, err = FindUserPermissions(v)
+		result, err = v.FindUserPermissions()
 	case *MsSqlDatabase:
-		result, err = QueryUserPermissions(v)
+		result, err = v.QueryUserPermissions()
 	default:
 		return "An error occurred while collecting user permissions."
 	}

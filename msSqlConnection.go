@@ -45,7 +45,7 @@ func (m *MsSqlDatabase) Connection() *sql.DB {
 	return m.connection
 }
 
-func QueryUserPermissions(database *MsSqlDatabase) (QueryResult[UserPermissionResult], error) {
+func (m *MsSqlDatabase) QueryUserPermissions() (QueryResult[UserPermissionResult], error) {
 	return QueryResult[UserPermissionResult]{
 		duration: time.Since(time.Now()),
 		data:     nil,
