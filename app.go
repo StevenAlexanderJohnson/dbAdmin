@@ -91,20 +91,18 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 		var connection Database
 		switch driver {
 		case "mssql":
-			s := MsSqlDatabase{
+			connection = &MsSqlDatabase{
 				server:   server,
 				database: database,
 				username: username,
 				password: password,
 			}
-			connection = &s
 		case "mongo":
-			m := MongoDatabase{
+			connection = &MongoDatabase{
 				server:   server,
 				username: username,
 				password: password,
 			}
-			connection = &m
 		}
 		if err := connection.Initialize(); err != nil {
 			return fmt.Sprintf("There was an error connecting to the database.\n%e\n", err)
