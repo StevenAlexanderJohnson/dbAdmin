@@ -28,14 +28,18 @@ func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
 	a.databaseHash = make(map[string]Database)
+
+	// Connect to the SQLite database.
 	appDataDir := filepath.Join(os.Getenv("APPDATA"), "dbAdmin")
 	_, err := os.Stat(appDataDir)
+	// Create the app data folder if it doesn't exists.
 	if os.IsNotExist(err) {
 		err := os.MkdirAll(appDataDir, 0755)
 		if err != nil {
 			log.Fatalf("Unable to create app data directory.\n%e\n", err)
 		}
 	}
+	// Create the db file if it doesn't exists.
 	databasePath := filepath.Join(appDataDir, "data.db")
 	_, err = os.Stat(databasePath)
 	if os.IsNotExist(err) {
@@ -71,11 +75,6 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
 	// Perform your teardown here
-}
-
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
 // Registers a database connection in memory.
