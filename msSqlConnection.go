@@ -43,10 +43,6 @@ func (m *MsSqlDatabase) Disconnect() error {
 	return nil
 }
 
-func (m *MsSqlDatabase) Connection() *sql.DB {
-	return m.connection
-}
-
 func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
 	tsql := `
 	SELECT p.name, dp.permission_name, o.name
