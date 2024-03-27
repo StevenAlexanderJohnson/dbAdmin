@@ -30,10 +30,11 @@ func (a *App) startup(ctx context.Context) {
 	a.databaseHash = make(map[string]Database)
 
 	// Connect to the SQLite database.
+	// Initialize SQLite db if it isn't already initialized.
 	appDataDir := filepath.Join(os.Getenv("APPDATA"), "dbAdmin")
 	_, err := os.Stat(appDataDir)
-	// Create the app data folder if it doesn't exists.
 	if os.IsNotExist(err) {
+		// 0755 means that owner an read/write/execute but all other applications can only read.
 		err := os.MkdirAll(appDataDir, 0755)
 		if err != nil {
 			log.Fatalf("Unable to create app data directory.\n%e\n", err)
