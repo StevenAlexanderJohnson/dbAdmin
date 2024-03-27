@@ -10,7 +10,6 @@ import (
 )
 
 type MongoDatabase struct {
-	Database
 	server   string
 	username string
 	password string

@@ -4,6 +4,4 @@ import {main} from '../models';
 
 export function GetUserPermissions(arg1:string,arg2:string,arg3:string):Promise<main.QueryResult[main>;
 
-export function Greet(arg1:string):Promise<string>;
-
 export function RegisterDatabase(arg1:string,arg2:string,arg3:string,arg4:string,arg5:string):Promise<string>;

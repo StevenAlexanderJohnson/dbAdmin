@@ -9,7 +9,6 @@ import (
 )
 
 type MsSqlDatabase struct {
-	Database
 	server   string
 	database string
 	username string
