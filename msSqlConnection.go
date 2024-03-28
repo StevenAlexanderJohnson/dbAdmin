@@ -33,7 +33,7 @@ func (m *MsSqlDatabase) Initialize() error {
 		return err
 	}
 	m.connection = db
-	return nil
+	return db.PingContext(m.ctx)
 }
 
 func (m *MsSqlDatabase) Disconnect() error {
