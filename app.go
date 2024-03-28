@@ -57,7 +57,7 @@ func (a *App) startup(ctx context.Context) {
 
 // domReady is called after front-end resources have been loaded
 func (a App) domReady(ctx context.Context) {
-	// Add your action here
+	log.Println("######### THE DOM IS READY #########")
 }
 
 // beforeClose is called when the application is about to quit,
@@ -82,6 +82,7 @@ func (a *App) shutdown(ctx context.Context) {
 //
 // Later on this will also register into a SQLite local DB to save credentials and connection information.
 func (a *App) RegisterDatabase(server string, database string, driver string, username string, password string) string {
+	log.Println(server, database, driver, username, password)
 	switch driver {
 	case "mssql":
 		databaseKey := fmt.Sprintf("%s:%s", server, database)
@@ -103,7 +104,10 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 				server:   server,
 				username: username,
 				password: password,
+				ctx:      a.ctx,
 			}
+		default:
+			return fmt.Sprintf("Invalid driver was selected: %s\n", driver)
 		}
 		if err := connection.Initialize(); err != nil {
 			return fmt.Sprintf("There was an error connecting to the database.\n%e\n", err)

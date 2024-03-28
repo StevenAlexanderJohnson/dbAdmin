@@ -13,11 +13,13 @@ type MongoDatabase struct {
 	server   string
 	username string
 	password string
+	ctx      context.Context
 
 	connection *mongo.Client
 }
 
 func (m *MongoDatabase) Initialize() error {
+	fmt.Println("MONGO", m.server, m.username, m.password)
 	client, err := mongo.Connect(
 		context.TODO(),
 		options.Client().ApplyURI(
@@ -33,7 +35,7 @@ func (m *MongoDatabase) Initialize() error {
 		return err
 	}
 	m.connection = client
-	return nil
+	return client.Ping(m.ctx, nil)
 }
 
 func (m *MongoDatabase) Disconnect() error {
