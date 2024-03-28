@@ -9,7 +9,7 @@
 
   let usingConnectionString = false;
 
-  document.addEventListener("submit", (e) => {
+  document.addEventListener("submit", async  (e) => {
     e.preventDefault();
     console.log(serverInput);
     console.log(databaseInput);
@@ -17,13 +17,14 @@
     console.log(passwordInput);
     console.log(connectionStringInput);
     console.log(usingConnectionString);
-    RegisterDatabase(
+    let output = await RegisterDatabase(
       serverInput,
       databaseInput,
       "mssql",
       usernameInput,
       passwordInput
     );
+    console.log(output)
   });
 </script>
 
