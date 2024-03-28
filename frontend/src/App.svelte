@@ -2,16 +2,6 @@
   import Home from './pages/Home.svelte';
   import Register from './pages/Register.svelte';
   import Router from 'svelte-spa-router';
-  import { Greet } from '../wailsjs/go/main/App';
-
-  let name = "";
-  let greeting = "";
-
-  function greet() {
-    Greet(name).then((result) => {
-      greeting = result;
-    });
-  }
 
   const routes = {
     '/': Home,
