@@ -60,11 +60,13 @@
       title="server-select"
       class="w-80 h-16 text-center text-2xl outline-none bg-transparent z-10 border-b-2 border-primary text-text invalid:border-red-600 peer"
       value="mssql"
-      disabled
       required
     >
       <option value="mssql" class="bg-background outline-none border-none">
         MS SQL
+      </option>
+      <option value="mongo" class="bg-background outline-none border-none">
+        MongoDB
       </option>
     </select>
     {#if usingConnectionString}
@@ -82,7 +84,7 @@
         type="text"
         class="w-80 h-16 text-center text-2xl outline-none bg-transparent border-b-2 border-primary text-text invalid:border-red-600"
         placeholder="Server Name"
-        pattern="[A-Za-z0-9\.]*"
+        pattern="[A-Za-z0-9\.:]*"
         required
         bind:value={serverInput}
       />
