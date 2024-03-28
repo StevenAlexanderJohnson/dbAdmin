@@ -6,6 +6,7 @@
   let connectionStringInput = "";
   let usernameInput = "";
   let passwordInput = "";
+  let driverInput = "";
 
   let usingConnectionString = false;
 
@@ -20,7 +21,7 @@
     let output = await RegisterDatabase(
       serverInput,
       databaseInput,
-      "mssql",
+      driverInput,
       usernameInput,
       passwordInput
     );
@@ -60,7 +61,7 @@
     <select
       title="server-select"
       class="w-80 h-16 text-center text-2xl outline-none bg-transparent z-10 border-b-2 border-primary text-text invalid:border-red-600 peer"
-      value="mssql"
+      bind:value={driverInput}
       required
     >
       <option value="mssql" class="bg-background outline-none border-none">
