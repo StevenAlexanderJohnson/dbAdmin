@@ -16,6 +16,7 @@ type MsSqlDatabase struct {
 
 	ctx        context.Context
 	connection *sql.DB
+	sqlite     *SqlLiteDatabase
 }
 
 func (m *MsSqlDatabase) Initialize() error {
@@ -30,6 +31,7 @@ func (m *MsSqlDatabase) Initialize() error {
 
 	db, err := sql.Open("sqlserver", url.String())
 	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "Initialize")
 		return err
 	}
 	m.connection = db
@@ -38,6 +40,7 @@ func (m *MsSqlDatabase) Initialize() error {
 
 func (m *MsSqlDatabase) Disconnect() error {
 	if err := m.connection.Close(); err != nil {
+		m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "Disconnect")
 		return err
 	}
 	return nil
@@ -58,6 +61,7 @@ func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryR
 	outputData := make([]UserPermissionResult, 0)
 	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("@user", user), sql.Named("@target", target))
 	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 		output.Data = nil
 		return output, err
 	}
@@ -65,6 +69,7 @@ func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryR
 		temp := UserPermissionResult{}
 		err = rows.Scan(&temp)
 		if err != nil {
+			m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 			log.Println("Error reading row from User Permissions result.")
 		}
 		outputData = append(outputData, temp)

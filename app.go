@@ -15,7 +15,7 @@ import (
 type App struct {
 	ctx          context.Context
 	databaseHash map[string]Database
-	localDb      *sql.DB
+	localDb      SqlLiteDatabase
 }
 
 // NewApp creates a new App application struct
@@ -49,9 +49,13 @@ func (a *App) startup(ctx context.Context) {
 			log.Fatalf("Unable to find or create app data db.\n%e\n", err)
 		}
 	}
-	a.localDb, err = sql.Open("sqlite3", databasePath)
+	localDb, err := sql.Open("sqlite3", databasePath)
 	if err != nil {
 		log.Fatalf("Unable to connect to app data db.\n%e\n", err)
+	}
+	a.localDb = SqlLiteDatabase{
+		connection: localDb,
+		ctx:        a.ctx,
 	}
 }
 
@@ -98,6 +102,7 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 				username: username,
 				password: password,
 				ctx:      a.ctx,
+				sqlite:   &a.localDb,
 			}
 		case "mongo":
 			connection = &MongoDatabase{
@@ -105,6 +110,7 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 				username: username,
 				password: password,
 				ctx:      a.ctx,
+				sqlite:   &a.localDb,
 			}
 		default:
 			return fmt.Sprintf("Invalid driver was selected: %s\n", driver)
