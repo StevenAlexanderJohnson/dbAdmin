@@ -13,9 +13,10 @@ type MongoDatabase struct {
 	server   string
 	username string
 	password string
-	ctx      context.Context
 
+	ctx        context.Context
 	connection *mongo.Client
+	sqlite     *SqlLiteDatabase
 }
 
 func (m *MongoDatabase) Initialize() error {
@@ -32,6 +33,7 @@ func (m *MongoDatabase) Initialize() error {
 		),
 	)
 	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "Initialize")
 		return err
 	}
 	m.connection = client
@@ -39,12 +41,24 @@ func (m *MongoDatabase) Initialize() error {
 }
 
 func (m *MongoDatabase) Disconnect() error {
-	return m.connection.Disconnect(context.TODO())
+	err := m.connection.Disconnect(context.TODO())
+	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions")
+		return err
+	}
+	return nil
 }
 
 func (m *MongoDatabase) FindUserPermissions() (QueryResult[UserPermissionResult], error) {
-	return QueryResult[UserPermissionResult]{
-		Duration: time.Since(time.Now()),
+	var output QueryResult[UserPermissionResult]
+	startTime := time.Now()
+	output = QueryResult[UserPermissionResult]{
+		Duration: time.Since(startTime),
 		Data:     nil,
-	}, nil
+	}
+	// if err != nil {
+	// 	m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions")
+	// 	return output, err
+	// }
+	return output, nil
 }
