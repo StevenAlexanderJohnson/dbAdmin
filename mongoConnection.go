@@ -43,7 +43,7 @@ func (m *MongoDatabase) Initialize() error {
 func (m *MongoDatabase) Disconnect() error {
 	err := m.connection.Disconnect(context.TODO())
 	if err != nil {
-		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions")
+		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "Disconnect")
 		return err
 	}
 	return nil
