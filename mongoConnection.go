@@ -25,7 +25,7 @@ func (m *MongoDatabase) Initialize() error {
 		context.TODO(),
 		options.Client().ApplyURI(
 			fmt.Sprintf(
-				"mongodb://%s:%s@%s/?authMechanism=DEFAULT",
+				"mongodb://%s:%s@%s/?authMechanism=SCRAM-SHA-256",
 				m.username,
 				m.password,
 				m.server,
