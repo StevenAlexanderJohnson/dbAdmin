@@ -25,7 +25,13 @@
         usernameInput,
         passwordInput
       );
-      push("/");
+      console.log(output);
+      let perms = await GetUserPermissions(
+        `${serverInput}:${databaseInput}`,
+        usernameInput,
+        databaseInput
+      );
+      console.log(perms);
     } catch (ex) {
       alert(ex);
     } finally {
