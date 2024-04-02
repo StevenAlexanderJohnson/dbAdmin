@@ -10,7 +10,7 @@
 
   let usingConnectionString = false;
 
-  document.addEventListener("submit", async  (e) => {
+  document.addEventListener("submit", async (e) => {
     e.preventDefault();
     console.log(serverInput);
     console.log(databaseInput);
@@ -18,14 +18,18 @@
     console.log(passwordInput);
     console.log(connectionStringInput);
     console.log(usingConnectionString);
-    let output = await RegisterDatabase(
-      serverInput,
-      databaseInput,
-      driverInput,
-      usernameInput,
-      passwordInput
-    );
-    console.log(output)
+    try {
+      let output = await RegisterDatabase(
+        serverInput,
+        databaseInput,
+        driverInput,
+        usernameInput,
+        passwordInput,
+      );
+      console.log(output);
+    } catch (ex) {
+      alert(ex);
+    }
   });
 </script>
 
