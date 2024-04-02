@@ -87,42 +87,29 @@ func (a *App) shutdown(ctx context.Context) {
 // Later on this will also register into a SQLite local DB to save credentials and connection information.
 func (a *App) RegisterDatabase(server string, database string, driver string, username string, password string) string {
 	log.Println(server, database, driver, username, password)
+	databaseKey := fmt.Sprintf("%s:%s", server, database)
+	var connection Database
 	switch driver {
 	case "mssql":
-		databaseKey := fmt.Sprintf("%s:%s", server, database)
 		if _, ok := a.databaseHash[databaseKey]; ok {
 			return fmt.Sprintf("%s has already been registered.\n", databaseKey)
 		}
-		var connection Database
-		switch driver {
-		case "mssql":
-			connection = &MsSqlDatabase{
-				server:   server,
-				database: database,
-				username: username,
-				password: password,
-				ctx:      a.ctx,
-				sqlite:   &a.localDb,
-			}
-		case "mongo":
-			connection = &MongoDatabase{
-				server:   server,
-				username: username,
-				password: password,
-				ctx:      a.ctx,
-				sqlite:   &a.localDb,
-			}
-		default:
-			return fmt.Sprintf("Invalid driver was selected: %s\n", driver)
+	case "mongo":
+		connection = &MongoDatabase{
+			server:   server,
+			username: username,
+			password: password,
+			ctx:      a.ctx,
+			sqlite:   &a.localDb,
 		}
-		if err := connection.Initialize(); err != nil {
-			return fmt.Sprintf("There was an error connecting to the database.\n%e\n", err)
-		}
-		a.databaseHash[databaseKey] = connection
-
 	default:
-		return fmt.Sprintf("%s is not a valid driver.\n", driver)
+		return fmt.Sprintf("Invalid driver was selected: %s\n", driver)
+
 	}
+	if err := connection.Initialize(); err != nil {
+		return fmt.Sprintf("There was an error connecting to the database.\n%e\n", err)
+	}
+	a.databaseHash[databaseKey] = connection
 	return "Successfully connected to the database."
 }
 
