@@ -104,7 +104,6 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 		}
 	default:
 		return fmt.Sprintf("Invalid driver was selected: %s\n", driver)
-
 	}
 	if err := connection.Initialize(); err != nil {
 		return fmt.Sprintf("There was an error connecting to the database.\n%e\n", err)
