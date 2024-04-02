@@ -49,7 +49,7 @@ func (m *MsSqlDatabase) Disconnect() error {
 func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
 	tsql := `
 	SELECT p.name, dp.permission_name, o.name
-	FROM sys.database_principles p
+	FROM sys.database_principals p
 	JOIN sys.database_permissions dp on dp.grantee_principal_id = p.principal_id
 	LEFT JOIN sys.objects o on o.object_id = dp.major_id
 	WHERE p.name = @user and (@target = '' or o.name = @target)
@@ -59,7 +59,7 @@ func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryR
 		Data:     nil,
 	}
 	outputData := make([]UserPermissionResult, 0)
-	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("@user", user), sql.Named("@target", target))
+	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("user", user), sql.Named("target", target))
 	if err != nil {
 		m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 		output.Data = nil

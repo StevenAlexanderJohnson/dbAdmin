@@ -1,6 +1,9 @@
 <script>
   import { push, pop } from "svelte-spa-router";
-  import { RegisterDatabase } from "../lib/wailsjs/go/main/App";
+  import {
+    GetUserPermissions,
+    RegisterDatabase,
+  } from "../lib/wailsjs/go/main/App";
   let serverInput = "";
   let databaseInput = "";
   let connectionStringInput = "";
@@ -24,9 +27,15 @@
         databaseInput,
         driverInput,
         usernameInput,
-        passwordInput,
+        passwordInput
       );
       console.log(output);
+      let perms = await GetUserPermissions(
+        `${serverInput}:${databaseInput}`,
+        usernameInput,
+        databaseInput
+      );
+      console.log(perms);
     } catch (ex) {
       alert(ex);
     }
