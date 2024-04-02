@@ -88,11 +88,19 @@ func (a *App) shutdown(ctx context.Context) {
 func (a *App) RegisterDatabase(server string, database string, driver string, username string, password string) string {
 	log.Println(server, database, driver, username, password)
 	databaseKey := fmt.Sprintf("%s:%s", server, database)
+	if _, ok := a.databaseHash[databaseKey]; ok {
+		return fmt.Sprintf("%s has already been registered.", databaseKey)
+	}
 	var connection Database
 	switch driver {
 	case "mssql":
-		if _, ok := a.databaseHash[databaseKey]; ok {
-			return fmt.Sprintf("%s has already been registered.\n", databaseKey)
+		connection = &MsSqlDatabase{
+			server:   server,
+			database: database,
+			username: username,
+			password: password,
+			ctx:      a.ctx,
+			sqlite:   &a.localDb,
 		}
 	case "mongo":
 		connection = &MongoDatabase{
