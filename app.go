@@ -127,18 +127,7 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 		return "", fmt.Errorf("%s has not been registered yet", databaseKey)
 	}
 
-	var err error
-	var queryResult QueryResult[UserPermissionResult]
-
-	switch v := db.(type) {
-	case *MongoDatabase:
-		queryResult, err = v.FindUserPermissions(user)
-	case *MsSqlDatabase:
-		queryResult, err = v.QueryUserPermissions(user, target)
-	default:
-		return "", fmt.Errorf("an error occurred while collecting user permissions")
-	}
-
+	queryResult, err := db.FindUserPermissions(user, target)
 	if err != nil {
 		return "", fmt.Errorf("an error occurred while collecting user permissions\n%s", err)
 	}
