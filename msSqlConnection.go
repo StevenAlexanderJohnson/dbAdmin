@@ -46,7 +46,7 @@ func (m *MsSqlDatabase) Disconnect() error {
 	return nil
 }
 
-func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
+func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
 	tsql := `
 	SELECT p.name, dp.permission_name, o.name
 	FROM sys.database_principals p

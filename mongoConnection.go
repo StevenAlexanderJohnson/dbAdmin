@@ -50,11 +50,11 @@ func (m *MongoDatabase) Disconnect() error {
 	return nil
 }
 
-func (m *MongoDatabase) FindUserPermissions(user string) (QueryResult[UserPermissionResult], error) {
+func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
 	var output QueryResult[UserPermissionResult]
 	startTime := time.Now()
 	cursor, err := m.connection.Database("admin").Aggregate(m.ctx, mongo.Pipeline{
-		{{Key: "$match", Value: bson.D{{Key: "user", Value: user}}}},
+		{{Key: "$match", Value: bson.D{{Key: "user", Value: user}, {Key: "roles.db", Value: bson.D{{Key: "$regex", Value: target}}}}}},
 		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$roles"}}}},
 		{{Key: "$project", Value: bson.D{
 			{Key: "name", Value: 1},
