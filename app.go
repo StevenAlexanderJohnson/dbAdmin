@@ -132,7 +132,7 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 
 	switch v := db.(type) {
 	case *MongoDatabase:
-		queryResult, err = v.FindUserPermissions()
+		queryResult, err = v.FindUserPermissions(user)
 	case *MsSqlDatabase:
 		queryResult, err = v.QueryUserPermissions(user, target)
 	default:
