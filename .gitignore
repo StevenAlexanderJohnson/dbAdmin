@@ -7,3 +7,5 @@ build/*
 !build/appicon.png
 
 vmcommand.txt
+
+dbAdmin/data.db
