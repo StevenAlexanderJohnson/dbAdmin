@@ -11,6 +11,7 @@ type Database interface {
 	Initialize() error
 	Disconnect() error
 	FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error)
+	FindUsers(target string) (QueryResult[UserPermissionResult], error)
 }
 
 type UserPermissionResult struct {

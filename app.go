@@ -121,6 +121,21 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 	return "Successfully connected to the database."
 }
 
+func (a *App) GetUsers(databaseKey string, target string) (string, error) {
+	db, ok := a.databaseHash[databaseKey]
+	if !ok {
+		return "", fmt.Errorf("%s has not been registered yet", databaseKey)
+	}
+
+	queryResult, err := db.FindUsers(target)
+	if err != nil {
+		return "", fmt.Errorf("an error occurred while collecting users\n%s", err)
+	}
+
+	output, err := json.Marshal(queryResult)
+	return string(output), err
+}
+
 func (a *App) GetUserPermissions(databaseKey string, user string, target string) (string, error) {
 	db, ok := a.databaseHash[databaseKey]
 	if !ok {
