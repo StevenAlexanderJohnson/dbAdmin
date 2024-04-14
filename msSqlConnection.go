@@ -16,6 +16,7 @@ type MsSqlDatabase struct {
 
 	ctx        context.Context
 	connection *sql.DB
+	sqlite     *SqlLiteDatabase
 }
 
 func (m *MsSqlDatabase) Initialize() error {
@@ -30,23 +31,25 @@ func (m *MsSqlDatabase) Initialize() error {
 
 	db, err := sql.Open("sqlserver", url.String())
 	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "Initialize")
 		return err
 	}
 	m.connection = db
-	return nil
+	return db.PingContext(m.ctx)
 }
 
 func (m *MsSqlDatabase) Disconnect() error {
 	if err := m.connection.Close(); err != nil {
+		m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "Disconnect")
 		return err
 	}
 	return nil
 }
 
-func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
+func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
 	tsql := `
-	SELECT p.name, dp.permission_name, o.name
-	FROM sys.database_principles p
+	SELECT p.name, dp.permission_name, o.name as object_name
+	FROM sys.database_principals p
 	JOIN sys.database_permissions dp on dp.grantee_principal_id = p.principal_id
 	LEFT JOIN sys.objects o on o.object_id = dp.major_id
 	WHERE p.name = @user and (@target = '' or o.name = @target)
@@ -56,17 +59,21 @@ func (m *MsSqlDatabase) QueryUserPermissions(user string, target string) (QueryR
 		Data:     nil,
 	}
 	outputData := make([]UserPermissionResult, 0)
-	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("@user", user), sql.Named("@target", target))
+	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("user", user), sql.Named("target", target))
 	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 		output.Data = nil
 		return output, err
 	}
 	for rows.Next() {
-		temp := UserPermissionResult{}
-		err = rows.Scan(&temp)
+		var temp UserPermissionResult
+		err = rows.Scan(&temp.Name, &temp.PermissionName, &temp.ObjectName)
 		if err != nil {
+			m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 			log.Println("Error reading row from User Permissions result.")
+			log.Println(err)
 		}
+		log.Println(temp)
 		outputData = append(outputData, temp)
 	}
 	output.Data = outputData

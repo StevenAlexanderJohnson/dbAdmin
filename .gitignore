@@ -5,3 +5,11 @@ dist/
 .idea
 build/*
 !build/appicon.png
+
+**/wailsjs/
+vmcommand.txt
+
+dbAdmin/data.db
+
+
+**/frontend/package.json.md5
