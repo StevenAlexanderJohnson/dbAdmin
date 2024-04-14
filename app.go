@@ -134,3 +134,12 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 	output, err := json.Marshal(queryResult)
 	return string(output), err
 }
+
+func (a *App) GetConnections() []string {
+	output := make([]string, 0, len(a.databaseHash))
+
+	for k := range a.databaseHash {
+		output = append(output, k)
+	}
+	return output
+}

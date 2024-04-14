@@ -7,28 +7,26 @@
   let usernameInput = "";
   let passwordInput = "";
   let driverInput = "";
-
   let usingConnectionString = false;
+
+  let disabled = false;
 
   document.addEventListener("submit", async (e) => {
     e.preventDefault();
-    console.log(serverInput);
-    console.log(databaseInput);
-    console.log(usernameInput);
-    console.log(passwordInput);
-    console.log(connectionStringInput);
-    console.log(usingConnectionString);
+    disabled = true;
     try {
-      let output = await RegisterDatabase(
+      await RegisterDatabase(
         serverInput,
         databaseInput,
         driverInput,
         usernameInput,
         passwordInput,
       );
-      console.log(output);
+      push("/");
     } catch (ex) {
       alert(ex);
+    } finally {
+      disabled = false;
     }
   });
 </script>
@@ -131,12 +129,13 @@
             hover:before:animate-pulse
         "
     >
-      <button
+      <input
+        type="button"
+        disabled={disabled}
         class="h-full w-full rounded-full bg-background text-2xl outline-none flex justify-center items-center relative text-text hover:cursor-pointer"
         on:click={() => pop()}
-      >
-        back
-      </button>
+        value="back"
+      />
     </div>
     <div
       class="
@@ -147,6 +146,7 @@
     >
       <input
         type="submit"
+        disabled={disabled}
         class="h-full w-full rounded-full bg-background text-2xl outline-none flex justify-center items-center relative text-text hover:cursor-pointer"
         value="register"
       />
