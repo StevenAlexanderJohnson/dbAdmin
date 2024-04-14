@@ -5,3 +5,6 @@ dist/
 .idea
 build/*
 !build/appicon.png
+
+
+**/wailsjs/
