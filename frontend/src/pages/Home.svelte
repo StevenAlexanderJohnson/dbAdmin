@@ -68,6 +68,7 @@
             />
         </div>
         <button class="text-primary" on:click={() => push('/register')}>Need to connect to a server?</button>
+        <button on:click={() => push('/permissions')}>Testing</button>
     </form>
     {/if}
 </div>
