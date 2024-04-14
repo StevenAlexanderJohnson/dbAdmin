@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -49,16 +50,38 @@ func (m *MongoDatabase) Disconnect() error {
 	return nil
 }
 
-func (m *MongoDatabase) FindUserPermissions() (QueryResult[UserPermissionResult], error) {
+func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
 	var output QueryResult[UserPermissionResult]
 	startTime := time.Now()
+	cursor, err := m.connection.Database("admin").Aggregate(m.ctx, mongo.Pipeline{
+		{{Key: "$match", Value: bson.D{{Key: "user", Value: user}, {Key: "roles.db", Value: bson.D{{Key: "$regex", Value: target}}}}}},
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$roles"}}}},
+		{{Key: "$project", Value: bson.D{
+			{Key: "name", Value: 1},
+			{Key: "role", Value: "$roles.role"},
+			{Key: "db", Value: "$roles.db"},
+		}}},
+	})
 	output = QueryResult[UserPermissionResult]{
 		Duration: time.Since(startTime),
 		Data:     nil,
 	}
-	// if err != nil {
-	// 	m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions")
-	// 	return output, err
-	// }
+	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions")
+		return output, err
+	}
+	data := make([]UserPermissionResult, 0)
+	for cursor.Next(m.ctx) {
+		var result UserPermissionResult
+		if err = cursor.Decode(&result); err != nil {
+			m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions:cursor.Decode()")
+		}
+		data = append(data, result)
+	}
+	if err := cursor.Err(); err != nil {
+		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions:cursor.Err()")
+		return output, nil
+	}
+	output.Data = data
 	return output, nil
 }
