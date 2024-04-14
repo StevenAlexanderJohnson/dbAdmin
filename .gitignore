@@ -9,3 +9,4 @@ build/*
 vmcommand.txt
 
 dbAdmin/data.db
+**/wailsjs/
