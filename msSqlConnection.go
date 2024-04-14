@@ -48,7 +48,7 @@ func (m *MsSqlDatabase) Disconnect() error {
 
 func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
 	tsql := `
-	SELECT p.name, dp.permission_name, o.name
+	SELECT p.name, dp.permission_name, o.name as object_name
 	FROM sys.database_principals p
 	JOIN sys.database_permissions dp on dp.grantee_principal_id = p.principal_id
 	LEFT JOIN sys.objects o on o.object_id = dp.major_id
@@ -66,12 +66,14 @@ func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryRe
 		return output, err
 	}
 	for rows.Next() {
-		temp := UserPermissionResult{}
-		err = rows.Scan(&temp)
+		var temp UserPermissionResult
+		err = rows.Scan(&temp.Name, &temp.PermissionName, &temp.ObjectName)
 		if err != nil {
 			m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 			log.Println("Error reading row from User Permissions result.")
+			log.Println(err)
 		}
+		log.Println(temp)
 		outputData = append(outputData, temp)
 	}
 	output.Data = outputData

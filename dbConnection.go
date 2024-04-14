@@ -14,9 +14,9 @@ type Database interface {
 }
 
 type UserPermissionResult struct {
-	Name           string  `json:"Name"`
-	PermissionName string  `json:"PermissionName"`
-	ObjectName     *string `json:"ObjectName"`
+	Name           string  `json:"name"`
+	PermissionName string  `json:"permission_name"`
+	ObjectName     *string `json:"object_name"`
 }
 
 // This interface acts like a constraint for what structs can be used for the generic type T in QueryResult.
