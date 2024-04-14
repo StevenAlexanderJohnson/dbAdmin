@@ -25,7 +25,6 @@
         usernameInput,
         passwordInput
       );
-      console.log(output);
       let perms = await GetUserPermissions(
         `${serverInput}:${databaseInput}`,
         usernameInput,

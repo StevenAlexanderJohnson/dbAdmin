@@ -10,3 +10,6 @@ build/*
 vmcommand.txt
 
 dbAdmin/data.db
+
+
+**/frontend/package.json.md5
