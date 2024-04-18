@@ -68,9 +68,9 @@ func (m *MongoDatabase) FindUsers(target string) (QueryResult[UserPermissionResu
 	cursor, err := col.Aggregate(m.ctx, mongo.Pipeline{
 		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$roles"}}}},
 		{{Key: "$project", Value: bson.D{
-			{Key: "name", Value: "$user"},
-			{Key: "role", Value: "$roles.role"},
-			{Key: "db", Value: "$roles.db"},
+			{Key: "Name", Value: "$user"},
+			{Key: "PermissionName", Value: "$roles.role"},
+			{Key: "ObjectName", Value: "$roles.db"},
 		}}},
 	})
 	output.Duration = time.Since(startTime)
@@ -96,9 +96,9 @@ func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryRe
 		{{Key: "$match", Value: bson.D{{Key: "user", Value: user}, {Key: "roles.db", Value: bson.D{{Key: "$regex", Value: target}}}}}},
 		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$roles"}}}},
 		{{Key: "$project", Value: bson.D{
-			{Key: "name", Value: 1},
-			{Key: "role", Value: "$roles.role"},
-			{Key: "db", Value: "$roles.db"},
+			{Key: "Name", Value: 1},
+			{Key: "PermissionName", Value: "$roles.role"},
+			{Key: "ObjectName", Value: "$roles.db"},
 		}}},
 	})
 	output = QueryResult[UserPermissionResult]{
