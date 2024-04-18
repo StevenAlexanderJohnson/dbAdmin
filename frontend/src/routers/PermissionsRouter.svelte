@@ -3,6 +3,7 @@
     import Router from "svelte-spa-router";
     import { pop } from "svelte-spa-router";
     import { GetConnections } from "../lib/wailsjs/go/main/App";
+    import {selectedConnection} from '../store.js';
     import Users from "../pages/Users.svelte";
 
     let connections = [];
@@ -14,7 +15,7 @@
         }
     };
     onLoad();
-
+    let selectedValue = "";
     const prefix = "/permissions";
     const routes = {
         "/": PermissionsDashboard,
@@ -42,6 +43,8 @@
                 <select
                     title="connection-selection"
                     class="bg-background p-5 rounded-full"
+                    bind:value={selectedValue}
+                    on:change={() => selectedConnection.set(selectedValue)}
                 >
                     {#each connections as connection}
                         <option value={connection} class="rounded-full">
