@@ -16,6 +16,9 @@
     };
     onLoad();
     let selectedValue = "";
+    selectedConnection.subscribe((value) => {
+        selectedValue = value;
+    })
     const prefix = "/permissions";
     const routes = {
         "/": PermissionsDashboard,
