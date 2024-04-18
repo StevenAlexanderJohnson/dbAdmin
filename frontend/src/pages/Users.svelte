@@ -1,5 +1,7 @@
 <script>
     import { GetUsers } from "../lib/wailsjs/go/main/App.js";
+    import {selectedConnection} from '../store.js';
+
     let users = [];
     const loadData = async () => {
         try {
@@ -10,10 +12,16 @@
         }
     };
     loadData();
+
+    let connection = '';
+    selectedConnection.subscribe((value) => {
+        connection = value;
+    })
 </script>
 
 <div>
     <h1 class="text-4xl">Users</h1>
+    <h2>{connection}</h2>
     <table>
         <thead>
             <tr>
