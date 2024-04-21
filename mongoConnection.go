@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -22,7 +21,6 @@ type MongoDatabase struct {
 }
 
 func (m *MongoDatabase) Initialize() error {
-	fmt.Println("MONGO", m.server, m.username, m.password)
 	client, err := mongo.Connect(
 		context.TODO(),
 		options.Client().ApplyURI(
@@ -52,17 +50,16 @@ func (m *MongoDatabase) Disconnect() error {
 }
 
 func (m *MongoDatabase) FindUsers(target string) (QueryResult[UserPermissionResult], error) {
-	log.Println(m.connection)
 	var output QueryResult[UserPermissionResult] = QueryResult[UserPermissionResult]{}
 	startTime := time.Now()
 	db := m.connection.Database(target)
 	if db == nil {
-		log.Printf("%s is not available", target)
+		m.sqlite.WriteLog(ERROR, fmt.Errorf("user tried accessing a database that didn't exists"), "mongoConnection.go", "FindUsers:Database()")
 		return output, nil
 	}
 	col := db.Collection("system.users")
 	if col == nil {
-		log.Println("system.users is not available")
+		m.sqlite.WriteLog(ERROR, fmt.Errorf("system.users table is not available for the database selected"), "mongoConnection.go", "FindUsers:Database()")
 		return output, nil
 	}
 	cursor, err := col.Aggregate(m.ctx, mongo.Pipeline{
