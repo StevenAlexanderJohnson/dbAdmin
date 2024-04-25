@@ -7,13 +7,19 @@
     let selectedUserValue = "";
     selectedUser.subscribe((value) => selectedUserValue = value);
 
-    let user = null;
-    $: GetUserPermissions(selectedConnectionValue, selectedUserValue, 'admin').then((data) => user = JSON.parse(data)['Data']).catch((err) => console.error(err));
+    let userPermissions = [];
+    $: GetUserPermissions(selectedConnectionValue, selectedUserValue, 'admin').then((data) => userPermissions = JSON.parse(data)['Data']).catch((err) => console.error(err));
 </script>
 
 <div>
-    {#if user}
-        <p>{user.Name}</p>
+    {#if userPermissions}
+        {#each userPermissions as permission}
+            <div>
+                <span>{permission.Name}</span>
+                <span>{permission.PermissionName}</span>
+                <span>{permission.ObjectName}</span>
+            </div>
+        {/each}
     {:else}
         <p>Please wait while we look up that user's permissions.</p>
     {/if}
