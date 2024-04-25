@@ -87,7 +87,6 @@ func (a *App) shutdown(ctx context.Context) {
 //
 // Later on this will also register into a SQLite local DB to save credentials and connection information.
 func (a *App) RegisterDatabase(server string, database string, driver string, username string, password string) string {
-	log.Println(server, database, driver, username, password)
 	databaseKey := fmt.Sprintf("%s:%s", server, database)
 	if _, ok := a.databaseHash[databaseKey]; ok {
 		return fmt.Sprintf("%s has already been registered.", databaseKey)

@@ -84,13 +84,15 @@ func (m *MongoDatabase) FindUsers(target string) (QueryResult[UserPermissionResu
 }
 
 func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
+	fmt.Printf("Searching for %s within %s", user, target)
 	var output QueryResult[UserPermissionResult]
 	startTime := time.Now()
-	cursor, err := m.connection.Database("admin").Aggregate(m.ctx, mongo.Pipeline{
+	cursor, err := m.connection.Database("admin").Collection("system.users").Aggregate(m.ctx, mongo.Pipeline{
 		{{Key: "$match", Value: bson.D{{Key: "user", Value: user}, {Key: "roles.db", Value: bson.D{{Key: "$regex", Value: target}}}}}},
 		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$roles"}}}},
 		{{Key: "$project", Value: bson.D{
-			{Key: "Name", Value: 1},
+			{Key: "_id", Value: 0},
+			{Key: "Name", Value: "$user"},
 			{Key: "PermissionName", Value: "$roles.role"},
 			{Key: "ObjectName", Value: "$roles.db"},
 		}}},
@@ -108,12 +110,13 @@ func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryRe
 		var result UserPermissionResult
 		if err = cursor.Decode(&result); err != nil {
 			m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions:cursor.Decode()")
+			continue
 		}
 		data = append(data, result)
 	}
 	if err := cursor.Err(); err != nil {
 		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions:cursor.Err()")
-		return output, nil
+		return output, err
 	}
 	output.Data = data
 	return output, nil
