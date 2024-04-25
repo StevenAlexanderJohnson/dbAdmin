@@ -136,7 +136,6 @@ func (a *App) GetUsers(databaseKey string, target string) (string, error) {
 }
 
 func (a *App) GetUserPermissions(databaseKey string, user string, target string) (string, error) {
-	fmt.Println("HIT", databaseKey, user, target)
 	db, ok := a.databaseHash[databaseKey]
 	if !ok {
 		return "", fmt.Errorf("%s has not been registered yet", databaseKey)
@@ -147,7 +146,6 @@ func (a *App) GetUserPermissions(databaseKey string, user string, target string)
 		return "", fmt.Errorf("an error occurred while collecting user permissions\n%s", err)
 	}
 	output, err := json.Marshal(queryResult)
-	log.Println(output, queryResult)
 	return string(output), err
 }
 
