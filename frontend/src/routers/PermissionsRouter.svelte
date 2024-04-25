@@ -56,6 +56,7 @@
                     Connections
                 </label>
                 <select
+                    bind:value={selectedConnection}
                     title="connection-selection"
                     class="bg-background p-5 rounded-full"
                     bind:value={selectedConnectionValue}
