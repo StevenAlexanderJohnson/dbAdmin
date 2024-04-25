@@ -18,7 +18,7 @@
     selectedUser.subscribe((value) => {
         selectedUserValue = value;
     });
-    $: console.log(selectedUserValue, selectedConnectionValue)
+
     $: GetUsers(selectedConnectionValue, "admin")
         .then((data) => users = JSON.parse(data)["Data"])
         .catch((err) => console.error(err));
