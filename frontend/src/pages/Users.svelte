@@ -1,17 +1,17 @@
 <script>
+    import { onMount } from "svelte";
     import { GetUsers } from "../lib/wailsjs/go/main/App.js";
     import {selectedConnection} from '../store.js';
 
     let users = [];
-    const loadData = async () => {
+    onMount(async () => {
         try {
             let data = await GetUsers("localhost:27017:mongo", "admin");
             users = JSON.parse(data)['Data'];
         } catch (err) {
             console.error(err);
         }
-    };
-    loadData();
+    });
 
     let connection = '';
     selectedConnection.subscribe((value) => {
