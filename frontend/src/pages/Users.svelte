@@ -1,4 +1,5 @@
 <script>
+    import { onMount } from "svelte";
     import { GetUsers } from "../lib/wailsjs/go/main/App.js";
     import { selectedConnection } from "../store.js";
 
@@ -9,7 +10,7 @@
     let target = 'bruh';
 
     let users = [];
-    const loadData = async () => {
+    onMount(async () => {
         try {
             let data = await GetUsers("localhost:minecraft", "minecraft");
             console.log(data);
@@ -17,8 +18,12 @@
         } catch (err) {
             console.error(err);
         }
-    };
-    loadData();
+    });
+
+    let connection = '';
+    selectedConnection.subscribe((value) => {
+        connection = value;
+    })
 </script>
 
 <div>
