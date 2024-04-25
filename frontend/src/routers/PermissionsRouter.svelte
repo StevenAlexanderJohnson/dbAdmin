@@ -20,7 +20,7 @@
     });
     $: console.log(selectedUserValue, selectedConnectionValue)
     $: GetUsers(selectedConnectionValue, "admin")
-        .then((data) => (users = JSON.parse(data)["Data"]))
+        .then((data) => users = JSON.parse(data)["Data"])
         .catch((err) => console.error(err));
 
     onMount(async () => {
@@ -81,7 +81,7 @@
                     on:change={() => selectedUser.set(selectedUserValue)}
                 >
                     {#each users as user}
-                        <option value={user} class="rounded-full">
+                        <option value={user.Name} class="rounded-full">
                             {user.Name}
                         </option>
                     {/each}
