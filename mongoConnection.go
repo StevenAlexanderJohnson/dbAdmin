@@ -121,3 +121,7 @@ func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryRe
 	output.Data = data
 	return output, nil
 }
+
+func (m *MongoDatabase) GrantPermissions(uset string, target string, permission string) (bool, error) {
+	return false, nil
+}
