@@ -62,14 +62,7 @@ func (m *MongoDatabase) FindUsers(target string) (QueryResult[UserPermissionResu
 		m.sqlite.WriteLog(ERROR, fmt.Errorf("system.users table is not available for the database selected"), "mongoConnection.go", "FindUsers:Database()")
 		return output, nil
 	}
-	cursor, err := col.Aggregate(m.ctx, mongo.Pipeline{
-		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$roles"}}}},
-		{{Key: "$project", Value: bson.D{
-			{Key: "Name", Value: "$user"},
-			{Key: "PermissionName", Value: "$roles.role"},
-			{Key: "ObjectName", Value: "$roles.db"},
-		}}},
-	})
+	cursor, err := col.Distinct(m.ctx, "user", bson.D{})
 	output.Duration = time.Since(startTime)
 	if err != nil {
 		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUsers")
@@ -77,11 +70,15 @@ func (m *MongoDatabase) FindUsers(target string) (QueryResult[UserPermissionResu
 	}
 
 	var data []UserPermissionResult
-	if err = cursor.All(m.ctx, &data); err != nil {
-		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUsers:cursor.All()")
-		return output, err
+	for _, result := range cursor {
+		if s, ok := result.(string); ok {
+			data = append(data, UserPermissionResult{
+				Name:           s,
+				PermissionName: "",
+				ObjectName:     nil,
+			})
+		}
 	}
-
 	output.Data = data
 	return output, nil
 }
