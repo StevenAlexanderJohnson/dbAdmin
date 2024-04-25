@@ -10,15 +10,16 @@
     let connections = [];
     let users = [];
 
-    let selectedValue = "";
+    let selectedConnectionValue = "";
     selectedConnection.subscribe((value) => {
-        selectedValue = value;
+        selectedConnectionValue = value;
     });
     let selectedUserValue = "";
     selectedUser.subscribe((value) => {
         selectedUserValue = value;
     });
-    $: GetUsers(selectedValue, "admin")
+    $: console.log(selectedUserValue, selectedConnectionValue)
+    $: GetUsers(selectedConnectionValue, "admin")
         .then((data) => (users = JSON.parse(data)["Data"]))
         .catch((err) => console.error(err));
 
@@ -57,8 +58,8 @@
                 <select
                     title="connection-selection"
                     class="bg-background p-5 rounded-full"
-                    bind:value={selectedValue}
-                    on:change={() => selectedConnection.set(selectedValue)}
+                    bind:value={selectedConnectionValue}
+                    on:change={() => selectedConnection.set(selectedConnectionValue)}
                 >
                     {#each connections as connection}
                         <option value={connection} class="rounded-full">
