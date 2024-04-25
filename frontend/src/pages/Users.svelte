@@ -1,22 +1,24 @@
 <script>
     import { GetUsers } from "../lib/wailsjs/go/main/App.js";
-    import {selectedConnection} from '../store.js';
+    import { selectedConnection } from "../store.js";
+
+    let connection = "";
+    selectedConnection.subscribe((value) => {
+        connection = value;
+    });
+    let target = 'bruh';
 
     let users = [];
     const loadData = async () => {
         try {
-            let data = await GetUsers("localhost:27017:mongo", "admin");
-            users = JSON.parse(data)['Data'];
+            let data = await GetUsers("localhost:minecraft", "minecraft");
+            console.log(data);
+            users = JSON.parse(data)["Data"];
         } catch (err) {
             console.error(err);
         }
     };
     loadData();
-
-    let connection = '';
-    selectedConnection.subscribe((value) => {
-        connection = value;
-    })
 </script>
 
 <div>
