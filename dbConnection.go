@@ -16,6 +16,7 @@ type Database interface {
 }
 
 type UserPermissionResult struct {
+	ID             string  `json:"_id"`
 	Name           string  `json:"Name"`
 	PermissionName string  `json:"PermissionName"`
 	ObjectName     *string `json:"ObjectName"`
