@@ -109,6 +109,5 @@ func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryRe
 	return output, nil
 }
 
-func (m *MsSqlDatabase) GrantPermissions(uset string, target string, permission string) (bool, error) {
-	return false, nil
+func (m *MsSqlDatabase) GrantPermissions(user string, target string, permission string) (bool, error) {
 }

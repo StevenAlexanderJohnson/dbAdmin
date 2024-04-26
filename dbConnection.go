@@ -12,7 +12,7 @@ type Database interface {
 	Disconnect() error
 	FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error)
 	FindUsers(target string) (QueryResult[UserPermissionResult], error)
-	GrantPermissions(uset string, target string, permission string) (bool, error)
+	GrantPermissions(user string, target string, permission string) (bool, error)
 }
 
 type UserPermissionResult struct {

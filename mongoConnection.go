@@ -122,6 +122,6 @@ func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryRe
 	return output, nil
 }
 
-func (m *MongoDatabase) GrantPermissions(uset string, target string, permission string) (bool, error) {
+func (m *MongoDatabase) GrantPermissions(user string, target string, permission string) (bool, error) {
 	return false, nil
 }
