@@ -110,4 +110,5 @@ func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryRe
 }
 
 func (m *MsSqlDatabase) GrantPermissions(user string, target string, permission string) (bool, error) {
+	return false, nil
 }
