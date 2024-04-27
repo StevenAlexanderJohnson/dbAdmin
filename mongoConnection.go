@@ -142,3 +142,7 @@ func (m *MongoDatabase) GrantPermissions(user string, target string, permission 
 	}
 	return true, nil
 }
+
+func (m *MongoDatabase) RemovePermission(user string, target string, permission string) (bool, error) {
+	return false, nil
+}

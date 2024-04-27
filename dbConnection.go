@@ -13,6 +13,7 @@ type Database interface {
 	FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error)
 	FindUsers(target string) (QueryResult[UserPermissionResult], error)
 	GrantPermissions(user string, target string, permission string) (bool, error)
+	RemovePermission(user string, target string, permission string) (bool, error)
 }
 
 type UserPermissionResult struct {
