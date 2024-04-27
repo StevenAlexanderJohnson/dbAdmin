@@ -157,12 +157,3 @@ func (a *App) GetConnections() []string {
 	}
 	return output
 }
-
-func (a *App) GetConnections() []string {
-	output := make([]string, 0, len(a.databaseHash))
-
-	for k := range a.databaseHash {
-		output = append(output, k)
-	}
-	return output
-}
