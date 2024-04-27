@@ -1,13 +1,6 @@
 <script>
   import { push, pop } from "svelte-spa-router";
-<<<<<<< HEAD
   import { RegisterDatabase } from "../lib/wailsjs/go/main/App.js";
-=======
-  import {
-    GetUserPermissions,
-    RegisterDatabase,
-  } from "../lib/wailsjs/go/main/App";
->>>>>>> c4c1b26fd7d0469b658074c0b37f9421346e5d22
   let serverInput = "";
   let databaseInput = "";
   let connectionStringInput = "";
