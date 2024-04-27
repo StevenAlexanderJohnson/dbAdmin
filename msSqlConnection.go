@@ -46,6 +46,7 @@ func (m *MsSqlDatabase) Disconnect() error {
 	return nil
 }
 
+<<<<<<< HEAD
 func (m *MsSqlDatabase) FindUsers(target string) (QueryResult[UserPermissionResult], error) {
 	tsql := `
 	SELECT distinct p.name, dp.permission_name, o.name as object_name
@@ -80,6 +81,11 @@ func (m *MsSqlDatabase) FindUsers(target string) (QueryResult[UserPermissionResu
 func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
 	tsql := `
 	SELECT p.name, dp.permission_name, o.name
+=======
+func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
+	tsql := `
+	SELECT p.name, dp.permission_name, o.name as object_name
+>>>>>>> c4c1b26fd7d0469b658074c0b37f9421346e5d22
 	FROM sys.database_principals p
 	JOIN sys.database_permissions dp on dp.grantee_principal_id = p.principal_id
 	LEFT JOIN sys.objects o on o.object_id = dp.major_id
@@ -90,19 +96,25 @@ func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryRe
 		Data:     nil,
 	}
 	outputData := make([]UserPermissionResult, 0)
-	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("@user", user), sql.Named("@target", target))
+	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("user", user), sql.Named("target", target))
 	if err != nil {
 		m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 		output.Data = nil
 		return output, err
 	}
 	for rows.Next() {
+<<<<<<< HEAD
 		temp := UserPermissionResult{}
+=======
+		var temp UserPermissionResult
+>>>>>>> c4c1b26fd7d0469b658074c0b37f9421346e5d22
 		err = rows.Scan(&temp.Name, &temp.PermissionName, &temp.ObjectName)
 		if err != nil {
 			m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 			log.Println("Error reading row from User Permissions result.")
+			log.Println(err)
 		}
+		log.Println(temp)
 		outputData = append(outputData, temp)
 	}
 	output.Data = outputData

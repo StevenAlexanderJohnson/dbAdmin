@@ -21,6 +21,7 @@ type MongoDatabase struct {
 }
 
 func (m *MongoDatabase) Initialize() error {
+	fmt.Println("MONGO", m.server, m.username, m.password)
 	client, err := mongo.Connect(
 		context.TODO(),
 		options.Client().ApplyURI(
@@ -49,6 +50,7 @@ func (m *MongoDatabase) Disconnect() error {
 	return nil
 }
 
+<<<<<<< HEAD
 func (m *MongoDatabase) FindUsers(target string) (QueryResult[UserPermissionResult], error) {
 	var output QueryResult[UserPermissionResult] = QueryResult[UserPermissionResult]{}
 	startTime := time.Now()
@@ -95,6 +97,18 @@ func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryRe
 			{Key: "Name", Value: "$user"},
 			{Key: "PermissionName", Value: "$roles.role"},
 			{Key: "ObjectName", Value: "$roles.db"},
+=======
+func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
+	var output QueryResult[UserPermissionResult]
+	startTime := time.Now()
+	cursor, err := m.connection.Database("admin").Aggregate(m.ctx, mongo.Pipeline{
+		{{Key: "$match", Value: bson.D{{Key: "user", Value: user}, {Key: "roles.db", Value: bson.D{{Key: "$regex", Value: target}}}}}},
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$roles"}}}},
+		{{Key: "$project", Value: bson.D{
+			{Key: "name", Value: 1},
+			{Key: "role", Value: "$roles.role"},
+			{Key: "db", Value: "$roles.db"},
+>>>>>>> c4c1b26fd7d0469b658074c0b37f9421346e5d22
 		}}},
 	})
 	output = QueryResult[UserPermissionResult]{
@@ -110,12 +124,16 @@ func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryRe
 		var result UserPermissionResult
 		if err = cursor.Decode(&result); err != nil {
 			m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions:cursor.Decode()")
+<<<<<<< HEAD
 			continue
+=======
+>>>>>>> c4c1b26fd7d0469b658074c0b37f9421346e5d22
 		}
 		data = append(data, result)
 	}
 	if err := cursor.Err(); err != nil {
 		m.sqlite.WriteLog(ERROR, err, "mongoConnection.go", "FindUserPermissions:cursor.Err()")
+<<<<<<< HEAD
 		return output, err
 	}
 	output.Data = data
@@ -160,4 +178,10 @@ func (m *MongoDatabase) RemovePermission(user string, target string, permission 
 		return true, fmt.Errorf("more than one user was found using %s. number of updates: %d. matched records: %d", user, cursor.ModifiedCount, cursor.MatchedCount)
 	}
 	return true, nil
+=======
+		return output, nil
+	}
+	output.Data = data
+	return output, nil
+>>>>>>> c4c1b26fd7d0469b658074c0b37f9421346e5d22
 }

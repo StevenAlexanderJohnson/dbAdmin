@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script>
     import { GetUserPermissions } from "../lib/wailsjs/go/main/App.js";
     import {selectedConnection, selectedUser} from '../store.js';
@@ -24,3 +25,8 @@
         <p>Please wait while we look up that user's permissions.</p>
     {/if}
 </div>
+=======
+<div>
+    <h1 class="text-4xl">Users</h1>
+</div>
+>>>>>>> c4c1b26fd7d0469b658074c0b37f9421346e5d22
