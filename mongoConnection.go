@@ -144,5 +144,20 @@ func (m *MongoDatabase) GrantPermissions(user string, target string, permission 
 }
 
 func (m *MongoDatabase) RemovePermission(user string, target string, permission string) (bool, error) {
-	return false, nil
+	cursor, err := m.connection.Database("admin").Collection("system.user").UpdateOne(
+		m.ctx,
+		bson.D{{Key: "_id", Value: user}},
+		bson.D{{Key: "$pull", Value: bson.D{{Key: "roles", Value: bson.D{{Key: "role", Value: permission}, {Key: "db", Value: target}}}}}},
+	)
+	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "mongoConnection", "RemovePermission:UpdateOne")
+		return false, err
+	}
+	if cursor.ModifiedCount == 0 {
+		return false, fmt.Errorf("user was not able to be found using the provided data")
+	}
+	if cursor.ModifiedCount > 1 || cursor.MatchedCount > 1 {
+		return true, fmt.Errorf("more than one user was found using %s. number of updates: %d. matched records: %d", user, cursor.ModifiedCount, cursor.MatchedCount)
+	}
+	return true, nil
 }
