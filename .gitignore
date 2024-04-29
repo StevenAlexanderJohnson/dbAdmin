@@ -10,6 +10,6 @@ build/*
 vmcommand.txt
 
 dbAdmin/data.db
+**/wailsjs/
 
-
-**/frontend/package.json.md5
+frontend/package.json.md5

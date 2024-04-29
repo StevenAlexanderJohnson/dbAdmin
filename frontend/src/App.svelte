@@ -1,20 +1,9 @@
 <script>
-  import Home from "./pages/Home.svelte";
-  import Permissions from "./pages/PermissionsDashboard.svelte";
-  import Register from "./pages/Register.svelte";
-  import Router from "svelte-spa-router";
-  import PermissionsRouter from "./routers/PermissionsRouter.svelte";
-
-  const routes = {
-    "/": Home,
-    "/register": Register,
-    "/permissions": PermissionsRouter,
-    "/permissions/*": PermissionsRouter
-  };
+  import AppRouter from "./routers/AppRouter.svelte";
 </script>
 
 <main>
-  <Router {routes} />
+  <AppRouter />
 </main>
 
 <style>

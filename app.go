@@ -87,7 +87,6 @@ func (a *App) shutdown(ctx context.Context) {
 //
 // Later on this will also register into a SQLite local DB to save credentials and connection information.
 func (a *App) RegisterDatabase(server string, database string, driver string, username string, password string) string {
-	log.Println(server, database, driver, username, password)
 	databaseKey := fmt.Sprintf("%s:%s", server, database)
 	if _, ok := a.databaseHash[databaseKey]; ok {
 		return fmt.Sprintf("%s has already been registered.", databaseKey)
@@ -119,6 +118,21 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 	}
 	a.databaseHash[databaseKey] = connection
 	return "Successfully connected to the database."
+}
+
+func (a *App) GetUsers(databaseKey string, target string) (string, error) {
+	db, ok := a.databaseHash[databaseKey]
+	if !ok {
+		return "", fmt.Errorf("%s has not been registered yet", databaseKey)
+	}
+
+	queryResult, err := db.FindUsers(target)
+	if err != nil {
+		return "", fmt.Errorf("an error occurred while collecting users\n%s", err)
+	}
+
+	output, err := json.Marshal(queryResult)
+	return string(output), err
 }
 
 func (a *App) GetUserPermissions(databaseKey string, user string, target string) (string, error) {

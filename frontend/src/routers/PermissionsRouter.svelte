@@ -2,18 +2,34 @@
     import PermissionsDashboard from "../pages/PermissionsDashboard.svelte";
     import Router from "svelte-spa-router";
     import { pop } from "svelte-spa-router";
-    import { GetConnections } from "../lib/wailsjs/go/main/App";
+    import { GetConnections, GetUsers } from "../lib/wailsjs/go/main/App";
+    import { selectedConnection, selectedUser } from "../store.js";
     import Users from "../pages/Users.svelte";
+    import { onMount } from "svelte";
 
     let connections = [];
-    const onLoad = async () => {
+    let users = [];
+
+    let selectedConnectionValue = "";
+    selectedConnection.subscribe((value) => {
+        selectedConnectionValue = value;
+    });
+    let selectedUserValue = "";
+    selectedUser.subscribe((value) => {
+        selectedUserValue = value;
+    });
+
+    $: GetUsers(selectedConnectionValue, "admin")
+        .then((data) => users = JSON.parse(data)["Data"])
+        .catch((err) => console.error(err));
+
+    onMount(async () => {
         try {
             connections = await GetConnections();
         } catch (ex) {
             alert(ex);
         }
-    };
-    onLoad();
+    });
 
     const prefix = "/permissions";
     const routes = {
@@ -42,10 +58,31 @@
                 <select
                     title="connection-selection"
                     class="bg-background p-5 rounded-full"
+                    bind:value={selectedConnectionValue}
+                    on:change={() => selectedConnection.set(selectedConnectionValue)}
                 >
                     {#each connections as connection}
                         <option value={connection} class="rounded-full">
                             {connection}
+                        </option>
+                    {/each}
+                </select>
+
+                <label
+                    for="user-selection"
+                    class="px-3 text-background text-xl font-extrabold"
+                >
+                    User
+                </label>
+                <select
+                    title="user-selection"
+                    class="bg-background p-5 rounded-full"
+                    bind:value={selectedUserValue}
+                    on:change={() => selectedUser.set(selectedUserValue)}
+                >
+                    {#each users as user}
+                        <option value={user.Name} class="rounded-full">
+                            {user.Name}
                         </option>
                     {/each}
                 </select>
