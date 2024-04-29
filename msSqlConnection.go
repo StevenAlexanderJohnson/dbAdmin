@@ -48,7 +48,7 @@ func (m *MsSqlDatabase) Disconnect() error {
 
 func (m *MsSqlDatabase) FindUsers(target string) (QueryResult[UserPermissionResult], error) {
 	tsql := `
-	SELECT distinct p.name, dp.permission_name, o.name as object_name
+	SELECT distinct p.name
 	FROM sys.database_principals p
 	JOIN sys.database_permissions dp on dp.grantee_principal_id = p.principal_id
 	LEFT JOIN sys.objects o on o.object_id = dp.major_id
