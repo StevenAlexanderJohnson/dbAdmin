@@ -4,7 +4,6 @@
     import { pop } from "svelte-spa-router";
     import { GetConnections, GetUsers } from "../lib/wailsjs/go/main/App";
     import { selectedConnection, selectedUser } from "../store.js";
-    import Users from "../pages/Users.svelte";
     import { onMount } from "svelte";
 
     let connections = [];
@@ -34,14 +33,13 @@
     const prefix = "/permissions";
     const routes = {
         "/": PermissionsDashboard,
-        "/users": Users,
     };
 </script>
 
 <div>
     <div
         class="
-        h-20 w-full bg-gradient-to-r from-primary to-accent pb-2 relative flex items-center
+        min-h-fit w-full bg-gradient-to-r from-primary to-accent pb-2 relative flex items-center
         before:absolute before:top-0 before:content-[''] before:w-full before:h-full before:bg-gradient-to-r before:blur-xl
         "
     >
