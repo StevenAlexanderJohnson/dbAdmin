@@ -11,7 +11,6 @@
     let selectedUserValue = "";
     selectedUser.subscribe((value) => (selectedUserValue = value));
 
-
     let userPermissions = [];
     $: GetUserPermissions(selectedConnectionValue, selectedUserValue)
         .then((data) => (userPermissions = JSON.parse(data)["Data"]))
@@ -19,15 +18,54 @@
 
     let showModal = false;
     let addingPermission = false;
-    let permissionName = "";
+    let permissionObject = {
+        Name: "",
+        PermissionName: "",
+        ObjectName: "",
+    };
 </script>
 
 {#if showModal}
     <div
-        class="fixed border border-text px-20 py-20 bg-background top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 "
+        class="fixed border border-text px-20 py-20 bg-background top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
     >
-        <form on:submit|preventDefault={() => {}} class="flex flex-col justify-center gap-2">
+        <form
+            on:submit|preventDefault={async () => {
+                try {
+                    if (!addingPermission) {
+                        await RemovePermissions(
+                            selectedConnectionValue,
+                            selectedUserValue,
+                            permissionObject.ObjectName,
+                            permissionObject.PermissionName,
+                        );
+                    } else {
+                        GrantPermissions(
+                            selectedConnectionValue,
+                            selectedUserValue,
+                            permissionObject.ObjectName,
+                            permissionObject.PermissionName,
+                        );
+                    }
+                } catch (ex) {
+                    console.error(ex);
+                }
+            }}
+            class="flex flex-col justify-center gap-2 bg-background"
+        >
             {#if addingPermission}
+                <label for="add-target">
+                    Permission to add to {selectedUserValue}
+                </label>
+                <input
+                    type="text"
+                    class="w-80 h-16 text-center text-2xl outline-none bg-transparent border-b-2 border-primary text-text invalid:border-red-600"
+                    name="add-target"
+                    title="add-target"
+                    required
+                    pattern="*"
+                    bind:value={permissionObject.ObjectName}
+                />
                 <label for="add-permission">
                     Permission to add to {selectedUserValue}
                 </label>
@@ -38,10 +76,12 @@
                     title="add-permission"
                     required
                     pattern="*"
+                    bind:value={permissionObject.PermissionName}
                 />
             {:else}
                 <h2>
-                    You are about to remove the {permissionName} permission from
+                    You are about to remove the {permissionObject.PermissionName}
+                    permission from
                     {selectedUserValue}.
                 </h2>
             {/if}
@@ -87,7 +127,7 @@
                     on:click={() => {
                         showModal = true;
                         addingPermission = false;
-                        permissionName = permission.PermissionName;
+                        permissionObject = permission;
                     }}>Remove</button
                 >
             </div>

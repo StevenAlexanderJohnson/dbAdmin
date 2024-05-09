@@ -107,6 +107,7 @@ func (a *App) RegisterDatabase(server string, database string, driver string, us
 			server:   server,
 			username: username,
 			password: password,
+			database: database,
 			ctx:      a.ctx,
 			sqlite:   &a.localDb,
 		}

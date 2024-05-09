@@ -14,6 +14,7 @@ type MongoDatabase struct {
 	server   string
 	username string
 	password string
+	database string
 
 	ctx        context.Context
 	connection *mongo.Client
@@ -26,10 +27,11 @@ func (m *MongoDatabase) Initialize() error {
 		context.TODO(),
 		options.Client().ApplyURI(
 			fmt.Sprintf(
-				"mongodb://%s:%s@%s/?authMechanism=SCRAM-SHA-256",
+				"mongodb://%s:%s@%s/%s?authMechanism=SCRAM-SHA-256",
 				m.username,
 				m.password,
 				m.server,
+				m.database,
 			),
 		),
 	)
@@ -85,7 +87,6 @@ func (m *MongoDatabase) FindUsers(target string) (QueryResult[UserPermissionResu
 }
 
 func (m *MongoDatabase) FindUserPermissions(user string) (QueryResult[UserPermissionResult], error) {
-	fmt.Printf("Searching for %s within %s", user)
 	var output QueryResult[UserPermissionResult]
 	startTime := time.Now()
 	cursor, err := m.connection.Database("admin").Collection("system.users").Aggregate(m.ctx, mongo.Pipeline{
