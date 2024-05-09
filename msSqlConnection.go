@@ -77,20 +77,20 @@ func (m *MsSqlDatabase) FindUsers(target string) (QueryResult[UserPermissionResu
 	return output, nil
 }
 
-func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
+func (m *MsSqlDatabase) FindUserPermissions(user string) (QueryResult[UserPermissionResult], error) {
 	tsql := `
 	SELECT p.name, dp.permission_name, o.name
 	FROM sys.database_principals p
 	JOIN sys.database_permissions dp on dp.grantee_principal_id = p.principal_id
 	LEFT JOIN sys.objects o on o.object_id = dp.major_id
-	WHERE p.name = @user and (@target = '' or o.name = @target)
+	WHERE p.name = @user
 	`
 	output := QueryResult[UserPermissionResult]{
 		Duration: time.Since(time.Now()),
 		Data:     nil,
 	}
 	outputData := make([]UserPermissionResult, 0)
-	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("user", user), sql.Named("target", target))
+	rows, err := m.connection.QueryContext(m.ctx, tsql, sql.Named("user", user))
 	if err != nil {
 		m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 		output.Data = nil
@@ -101,10 +101,7 @@ func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryRe
 		err = rows.Scan(&temp.Name, &temp.PermissionName, &temp.ObjectName)
 		if err != nil {
 			m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
-			log.Println("Error reading row from User Permissions result.")
-			log.Println(err)
 		}
-		log.Println(temp)
 		outputData = append(outputData, temp)
 	}
 	output.Data = outputData
@@ -112,9 +109,24 @@ func (m *MsSqlDatabase) FindUserPermissions(user string, target string) (QueryRe
 }
 
 func (m *MsSqlDatabase) GrantPermissions(user string, target string, permission string) (bool, error) {
-	return false, nil
+	tsql := `GRANT @perm ON @target TO @user`
+	res, err := m.connection.ExecContext(m.ctx, tsql, sql.Named("perm", permission), sql.Named("user", user), sql.Named("target", target))
+	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "mssqlConnection.go", "GrantPermissions")
+		return false, err
+	}
+	log.Println(res)
+	return true, nil
 }
 
 func (m *MsSqlDatabase) RemovePermission(user string, target string, permission string) (bool, error) {
-	return false, nil
+	tsql := `REVOKE @perm ON @target TO @user`
+	log.Println(user, target, permission)
+	res, err := m.connection.ExecContext(m.ctx, tsql, sql.Named("perm", permission), sql.Named("user", user), sql.Named("target", target))
+	if err != nil {
+		m.sqlite.WriteLog(ERROR, err, "mssqlConnection.go", "GrantPermissions")
+		return false, err
+	}
+	log.Println(res)
+	return true, nil
 }

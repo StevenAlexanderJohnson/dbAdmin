@@ -1,5 +1,9 @@
 <script>
     import { GetUserPermissions } from "../lib/wailsjs/go/main/App";
+    import {
+        GrantPermissions,
+        RemovePermissions,
+    } from "../lib/wailsjs/go/main/App";
     import { selectedConnection, selectedUser } from "../store";
 
     let selectedConnectionValue = "";
@@ -7,16 +11,8 @@
     let selectedUserValue = "";
     selectedUser.subscribe((value) => (selectedUserValue = value));
 
-    let selectedDatabaseValue = "";
-    let connectionArr = selectedConnectionValue.split(':')
-    selectedDatabaseValue = connectionArr[connectionArr.length-1]
-
     let userPermissions = [];
-    $: GetUserPermissions(
-        selectedConnectionValue,
-        selectedUserValue,
-        selectedDatabaseValue,
-    )
+    $: GetUserPermissions(selectedConnectionValue, selectedUserValue)
         .then((data) => (userPermissions = JSON.parse(data)["Data"]))
         .catch((err) => console.error(err));
 </script>
@@ -31,7 +27,10 @@
         <span>Role</span>
         <span>Database</span>
         <span>
-            <button type="button" class="underline underline-offset-4 hover:text-primary">
+            <button
+                type="button"
+                class="underline underline-offset-4 hover:text-primary"
+            >
                 Grant Permssion
             </button>
         </span>
@@ -40,7 +39,18 @@
             <span>{permission.PermissionName}</span>
             <span>{permission.ObjectName}</span>
             <div>
-                <button class="underline underline-offset-4 hover:text-primary">Remove</button>
+                <button
+                    on:click={() => {
+                        RemovePermissions(
+                            selectedConnectionValue,
+                            selectedUserValue,
+                            permission.ObjectName,
+                            permission.PermissionName,
+                        );
+                    }}
+                    class="underline underline-offset-4 hover:text-primary"
+                    >Remove</button
+                >
             </div>
         {/each}
     </div>
