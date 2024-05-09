@@ -8,6 +8,8 @@
     selectedUser.subscribe((value) => (selectedUserValue = value));
 
     let selectedDatabaseValue = "";
+    let connectionArr = selectedConnectionValue.split(':')
+    selectedDatabaseValue = connectionArr[connectionArr.length-1]
 
     let userPermissions = [];
     $: GetUserPermissions(

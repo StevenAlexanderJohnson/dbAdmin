@@ -24,7 +24,7 @@
       );
       push("/");
     } catch (ex) {
-      alert(ex);
+      console.error(ex);
     } finally {
       disabled = false;
     }
@@ -131,7 +131,7 @@
     >
       <input
         type="button"
-        disabled={disabled}
+        {disabled}
         class="h-full w-full rounded-full bg-background text-2xl outline-none flex justify-center items-center relative text-text hover:cursor-pointer"
         on:click={() => pop()}
         value="back"
@@ -146,7 +146,7 @@
     >
       <input
         type="submit"
-        disabled={disabled}
+        {disabled}
         class="h-full w-full rounded-full bg-background text-2xl outline-none flex justify-center items-center relative text-text hover:cursor-pointer"
         value="register"
       />
