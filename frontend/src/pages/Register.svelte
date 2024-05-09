@@ -22,7 +22,6 @@
         usernameInput,
         passwordInput,
       );
-      console.log("succeed");
       push("/");
     } catch (ex) {
       console.error(ex);
