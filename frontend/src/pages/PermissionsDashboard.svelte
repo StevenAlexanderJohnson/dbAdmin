@@ -39,16 +39,7 @@
             <span>{permission.PermissionName}</span>
             <span>{permission.ObjectName}</span>
             <div>
-                <button
-                    on:click={() => {
-                        RemovePermissions(
-                            selectedConnectionValue,
-                            selectedUserValue,
-                            permission.ObjectName,
-                            permission.PermissionName,
-                        );
-                    }}
-                    class="underline underline-offset-4 hover:text-primary"
+                <button class="underline underline-offset-4 hover:text-primary"
                     >Remove</button
                 >
             </div>
