@@ -135,13 +135,13 @@ func (a *App) GetUsers(databaseKey string, target string) (string, error) {
 	return string(output), err
 }
 
-func (a *App) GetUserPermissions(databaseKey string, user string, target string) (string, error) {
+func (a *App) GetUserPermissions(databaseKey string, user string) (string, error) {
 	db, ok := a.databaseHash[databaseKey]
 	if !ok {
 		return "", fmt.Errorf("%s has not been registered yet", databaseKey)
 	}
 
-	queryResult, err := db.FindUserPermissions(user, target)
+	queryResult, err := db.FindUserPermissions(user)
 	if err != nil {
 		return "", fmt.Errorf("an error occurred while collecting user permissions\n%s", err)
 	}
@@ -156,4 +156,28 @@ func (a *App) GetConnections() []string {
 		output = append(output, k)
 	}
 	return output
+}
+
+func (a *App) GrantPermissions(databaseKey string, user string, target string, permission string) (bool, error) {
+	db, ok := a.databaseHash[databaseKey]
+	if !ok {
+		return false, fmt.Errorf("%s has not been registered yet", databaseKey)
+	}
+	queryResult, err := db.GrantPermissions(user, target, permission)
+	if err != nil {
+		return false, fmt.Errorf("an error occurred while granting user permission\n%s", err)
+	}
+	return queryResult, nil
+}
+
+func (a *App) RemovePermissions(databaseKey string, user string, target string, permission string) (bool, error) {
+	db, ok := a.databaseHash[databaseKey]
+	if !ok {
+		return false, fmt.Errorf("%s has not been registered yet", databaseKey)
+	}
+	queryResult, err := db.RemovePermission(user, target, permission)
+	if err != nil {
+		return false, fmt.Errorf("an error occurred while granting user permission\n%s", err)
+	}
+	return queryResult, nil
 }

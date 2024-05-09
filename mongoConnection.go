@@ -84,12 +84,12 @@ func (m *MongoDatabase) FindUsers(target string) (QueryResult[UserPermissionResu
 	return output, nil
 }
 
-func (m *MongoDatabase) FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error) {
-	fmt.Printf("Searching for %s within %s", user, target)
+func (m *MongoDatabase) FindUserPermissions(user string) (QueryResult[UserPermissionResult], error) {
+	fmt.Printf("Searching for %s within %s", user)
 	var output QueryResult[UserPermissionResult]
 	startTime := time.Now()
 	cursor, err := m.connection.Database("admin").Collection("system.users").Aggregate(m.ctx, mongo.Pipeline{
-		{{Key: "$match", Value: bson.D{{Key: "user", Value: user}, {Key: "roles.db", Value: bson.D{{Key: "$regex", Value: target}}}}}},
+		{{Key: "$match", Value: bson.D{{Key: "user", Value: user}}}},
 		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$roles"}}}},
 		{{Key: "$project", Value: bson.D{
 			{Key: "_id", Value: 0},

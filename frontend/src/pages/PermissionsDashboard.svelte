@@ -1,5 +1,9 @@
 <script>
     import { GetUserPermissions } from "../lib/wailsjs/go/main/App";
+    import {
+        GrantPermissions,
+        RemovePermissions,
+    } from "../lib/wailsjs/go/main/App";
     import { selectedConnection, selectedUser } from "../store";
 
     let selectedConnectionValue = "";
@@ -7,16 +11,9 @@
     let selectedUserValue = "";
     selectedUser.subscribe((value) => (selectedUserValue = value));
 
-    let selectedDatabaseValue = "";
-    let connectionArr = selectedConnectionValue.split(":");
-    selectedDatabaseValue = connectionArr[connectionArr.length - 1];
 
     let userPermissions = [];
-    $: GetUserPermissions(
-        selectedConnectionValue,
-        selectedUserValue,
-        selectedDatabaseValue,
-    )
+    $: GetUserPermissions(selectedConnectionValue, selectedUserValue)
         .then((data) => (userPermissions = JSON.parse(data)["Data"]))
         .catch((err) => console.error(err));
 

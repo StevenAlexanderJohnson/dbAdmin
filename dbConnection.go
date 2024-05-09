@@ -10,7 +10,7 @@ import (
 type Database interface {
 	Initialize() error
 	Disconnect() error
-	FindUserPermissions(user string, target string) (QueryResult[UserPermissionResult], error)
+	FindUserPermissions(user string) (QueryResult[UserPermissionResult], error)
 	FindUsers(target string) (QueryResult[UserPermissionResult], error)
 	GrantPermissions(user string, target string, permission string) (bool, error)
 	RemovePermission(user string, target string, permission string) (bool, error)
