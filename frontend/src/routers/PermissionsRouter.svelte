@@ -8,17 +8,20 @@
 
     let connections = [];
     let users = [];
+    let database = "";
 
     let selectedConnectionValue = "";
     selectedConnection.subscribe((value) => {
         selectedConnectionValue = value;
+        let connectionArr = value.split(':')
+        database = connectionArr[connectionArr.length-1]
     });
     let selectedUserValue = "";
     selectedUser.subscribe((value) => {
         selectedUserValue = value;
     });
 
-    $: GetUsers(selectedConnectionValue, "admin")
+    $: GetUsers(selectedConnectionValue, database)
         .then((data) => users = JSON.parse(data)["Data"])
         .catch((err) => console.error(err));
 

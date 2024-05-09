@@ -66,7 +66,7 @@ func (m *MsSqlDatabase) FindUsers(target string) (QueryResult[UserPermissionResu
 	}
 	for rows.Next() {
 		temp := UserPermissionResult{}
-		err = rows.Scan(&temp.Name, &temp.PermissionName, &temp.ObjectName)
+		err = rows.Scan(&temp.Name)
 		if err != nil {
 			m.sqlite.WriteLog(ERROR, err, "msSqlConnection.go", "QueryUserPermissions")
 			log.Println("Error reading row from User Permissions result.")
